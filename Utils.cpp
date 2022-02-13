@@ -3,6 +3,7 @@
 #include <cstdio>
 #include <string>
 
+// https://stackoverflow.com/questions/8666378/detect-windows-or-linux-in-c-c/33088568
 // cross platform support
 #if defined(_WIN32) || defined(WIN32)
     // support for windows
@@ -22,6 +23,7 @@
     #define MAX_PATH PATH_MAX // unix, why is it PATH_MAX instead of MAX_PATH
 
     // fullpath method
+    // https://stackoverflow.com/questions/2341808/how-to-get-the-absolute-path-for-a-given-relative-path-programmatically-in-linux
     void fullpath(char* dst, const char* src) {
         realpath(src, dst);
     }
