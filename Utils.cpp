@@ -44,10 +44,6 @@ char* readFile(string name) {
 
     fclose(fp); // fclose frees fp
 
-    #if defined(WIN32) || defined(_WIN32)
-    return contents;
-    #else
     free(contents);
     return out;
-    #endif
 }
