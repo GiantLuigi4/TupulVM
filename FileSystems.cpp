@@ -5,14 +5,16 @@ using namespace std;
 // cross platform support
 #if defined(_WIN32) || defined(WIN32)
     // support for windows
-    #include <stdlib> // can I move this out of the ifdef? ig mac will decide that, now that I think about it
-    #define MAX_PATH _MAX_PATH // windows, why is there an _ before the variable now
+    #include <windows.h>
+    #include <stdlib.h> // can I move this out of the ifdef? ig mac will decide that, now that I think about it
+    // ok cool, I don't need this
+    // #define MAX_PATH _MAX_PATH // windows, why is there an _ before the variable now
 
     #define SEPERATOR_CHARACTER '\\'
 
     // fullpath method
     void fullpath(char* dst, const char* src) {
-        _fullpath(full, path.c_str(), _MAX_PATH);
+        _fullpath(dst, src, MAX_PATH);
     }
 #elif __unix__
     // support for linux
@@ -98,12 +100,24 @@ string fullpath(string path, string source) {
 
 #include <filesystem>
 string getWorkingDir() {
-    return std::filesystem::current_path().generic_string();
+    #if defined(_WIN32) || defined(WIN32)
+        // windows I hate you sometimes
+        // https://stackoverflow.com/a/21887925
+        char path[MAX_PATH];
+        GetCurrentDirectory(MAX_PATH, path);
+        string str = "";
+        for (int i = 0; i < MAX_PATH; i++) if (path[i] != 0) str += path[i]; else break;
+        return str;
+    #else
+        return filesystem::current_path().generic_string();
+    #endif
 }
 
 using namespace std;
 
 #define null nullptr
+
+#include <stdexcept>
 
 string absolutePath(string path) {
     #if defined(_WIN32) || defined(WIN32) || defined(__unix__)
@@ -115,7 +129,8 @@ string absolutePath(string path) {
             free(full);
             return str;
         }
-        __throw_logic_error("File path is invalid");
+        throw logic_error("File path is invalid");
+        // __throw_logic_error("File path is invalid");
     #else
         return fullpath(path); // thank you mac... and also whatever else exists that I don't know about
     #endif
