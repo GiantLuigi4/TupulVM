@@ -37,6 +37,10 @@ using namespace std;
     // so mac doesn't have a proper way of getting the full path in C afaik, and I kinda wanted to keep this part to C
     // this works
     string fullpath(string path) {
+        if (path[0] == '/') {
+            if (abs[1] == ':') path = abs[0] + ':' + abs[2]; // windows
+            abs = path;
+        }
         string abs = getWorkingDir() + "/";
         if (path.find_first_of(".") == -1) return abs + path;
         while (path.length() > 0) {
@@ -72,6 +76,10 @@ using namespace std;
 string fullpath(string path, string source) {
     if (source[source.length() - 1] != '/') source = source + "/";
     string abs = source;
+    if (path[0] == '/') {
+        if (abs[1] == ':') path = abs[0] + ':' + abs[2]; // windows
+        abs = path;
+    }
     if (path.find_first_of(".") == -1) return abs + path;
     while (path.length() > 0) {
         while (path[0] == '.') {

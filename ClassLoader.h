@@ -6,6 +6,6 @@
 using namespace std;
 
 class ClassLoader {
-	public: vector<TupulClass> classes = {};
+	public: vector<TupulClass*> classes = {};
 	public: SourceList sources;
 };
