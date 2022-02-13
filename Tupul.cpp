@@ -16,7 +16,7 @@ int main(int argc, char** args) {
 	ClassTree tree = sClassTree::create(str);
 	println(tree.name);
 	printf("%i\n", tree.methods.size());
-	println(tree.methods[0].name);
-	println(tree.methods[0].descr);
+		println(tree.methods[0].name);
+		println(tree.methods[0].descr);
 	return 0;
 }
