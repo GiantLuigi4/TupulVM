@@ -43,7 +43,7 @@ char* readFile(string name) {
     for (int i = 0; i < utf16.length(); i++) out[i] = utf16[i];
 
     fclose(fp); // fclose frees fp
-
     free(contents);
+
     return out;
 }

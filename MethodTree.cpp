@@ -2,6 +2,17 @@
 #include "Insn.h"
 #include "Opcodes.h"
 
+TupulMethod* finishMethod(MethodTree tree) {
+    InterpretedMethod* method = (InterpretedMethod*) calloc(sizeof(InterpretedMethod), 1);
+    // method.name = tree.name;
+    method->setupMethod(tree.insns);
+    // method.descr = tree.descr;
+    // method[0].set(tree.name, tree.descr);
+    method->name = tree.name;
+    method->descr = tree.descr;
+    return method;
+}
+
 MethodTree methodTreeFor(vector<byte> blockDescr, vector<byte> blockFunc) {
     string name = "";
     string descr = "";

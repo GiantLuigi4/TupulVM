@@ -1,15 +1,16 @@
+#pragma once
 #include <string>
 #include <vector>
 #include "MethodTree.h"
+#include "TupulClass.h"
 using namespace std;
 
 #define byte unsigned char
 
-class ClassTree {
+struct ClassTree {
     public: string name;
     public: vector<MethodTree> methods;
 };
 
-namespace sClassTree {
-    ClassTree create(string contents);
-};
+ClassTree createClassTree(string contents);
+TupulClass finishClass(ClassTree tree);

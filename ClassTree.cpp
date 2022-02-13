@@ -2,8 +2,20 @@
 #include "ClassTree.h"
 #include "MethodTree.h"
 #include "Opcodes.h"
+#include "TupulClass.h"
 
-ClassTree sClassTree::create(string str) {
+TupulClass finishClass(ClassTree tree) {
+    TupulClass clazz;
+    vector<TupulMethod*> methods;
+    for (MethodTree methodTree : tree.methods) {
+        methods.push_back(finishMethod(methodTree));
+    }
+    clazz.methods = methods;
+    clazz.name = tree.name;
+    return clazz;
+}
+
+ClassTree createClassTree(string str) {
     ClassTree tree;
     bool isName = false;
     string name = "";

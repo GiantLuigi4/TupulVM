@@ -2,6 +2,8 @@
 #include <string>
 #include <vector>
 #include "Insn.h"
+#include "TupulMethod.h"
+#include <memory>
 using namespace std;
 
 #define byte unsigned char
@@ -13,4 +15,5 @@ struct MethodTree {
 };
 
 MethodTree methodTreeFor(vector<byte> blockDescr, vector<byte> blockFunc);
+TupulMethod* finishMethod(MethodTree tree);
 // TODO: complete
