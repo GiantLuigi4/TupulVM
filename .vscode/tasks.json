@@ -9,7 +9,8 @@
                 "-g", "${workspaceFolder}/*.cpp",
                 "-o", "${workspaceFolder}/.vscode/program.exe",
                 "-lglfw",
-                "-lGL"
+                "-lGL",
+                "-O3" // I might as well
             ],
             "options": {
                 "cwd": "${workspaceFolder}"

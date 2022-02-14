@@ -19,6 +19,7 @@ void InterpretedMethod::setupMethod(vector<Insn> insns) {
 #include "Utils.h"
 #include "Locals.h"
 #include "Opcodes.h"
+#include "Types.h"
 byte** execInterp(TupulMethod* method) {
     Insn** insns = (Insn**) method->context;
     long len = (long) insns[1];
@@ -60,35 +61,20 @@ byte** execInterp(TupulMethod* method) {
                     bytes[2] = (i >> 8) & 0xFF;
                     bytes[3] = i & 0xFF;
                     locals.stack.push_back(bytes);
-                    // TODO: primitive types file
-                    byte* type = (byte*) calloc(sizeof(byte), 2);
-                    type[0] = 0;
-                    type[1] = 3; // 3 is int
-                    locals.stackTypes.push_back(type);
+                    locals.stackTypes.push_back(INT);
                 } else {
                     switch (insn.arg1[0]) {
                         case 'I':
                             // https://stackoverflow.com/a/4442669
                             int i = stoi(insn.arg0);
-                            // printf("%i\n", i);
                             byte* bytes = (byte*) calloc(sizeof(byte), 4);
                             // https://stackoverflow.com/a/43515755
                             bytes[0] = (i >> 24) & 0xFF;
                             bytes[1] = (i >> 16) & 0xFF;
                             bytes[2] = (i >> 8) & 0xFF;
                             bytes[3] = i & 0xFF;
-                            
-                            // printf("%i\n", ((bytes[0] & 0xFF) << 24) |
-                            //     ((bytes[1] & 0xFF) << 16) |
-                            //     ((bytes[2] & 0xFF) << 8) |
-                            //     ((bytes[3] & 0xFF) << 0));
-
                             locals.stack.push_back(bytes);
-                            // TODO: primitive types file
-                            byte* type = (byte*) calloc(sizeof(byte), 2);
-                            type[0] = 0;
-                            type[1] = 3; // 3 is int
-                            locals.stackTypes.push_back(type);
+                            locals.stackTypes.push_back(INT);
                             break;
                     }
                 }
@@ -111,16 +97,10 @@ byte** execInterp(TupulMethod* method) {
                     byte** output = (byte**) calloc(sizeof(byte*), 2);
                     byte* type = locals.stackTypes[locals.stackTypes.size() - 1];
 
-                    // TODO: offload this into it's own method in Types.cpp/Types.h
-                    byte* typeCopy = (byte*) calloc(sizeof(byte), 2);
-                    typeCopy[0] = type[0];
-                    typeCopy[1] = type[1];
-                    
-                    byte* bytesCopy = (byte*) calloc(sizeof(byte), 4); // TODO Types$typeLength(byte* bytes)
-                    bytesCopy[0] = bytes[0];
-                    bytesCopy[1] = bytes[1];
-                    bytesCopy[2] = bytes[2];
-                    bytesCopy[3] = bytes[3];
+                    byte* typeCopy = copyType(type);
+                    short len = getTypeLength(typeCopy);
+                    byte* bytesCopy = (byte*) calloc(sizeof(byte), len);
+                    for (short i = 0; i < len; i++) bytesCopy[i] = bytes[i];
 
                     output[0] = typeCopy;
                     output[1] = bytesCopy;

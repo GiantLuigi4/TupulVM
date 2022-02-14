@@ -4,9 +4,14 @@
 
 #include "ClassTree.h"
 
+#include <chrono>
+
 using namespace std;
 
 int main(int argc, char** args) {
+	// https://stackoverflow.com/a/12938135
+	long long start = std::chrono::system_clock::now().time_since_epoch().count();
+
 	// println(absolutePath(".vscode/BasicTest.txt"));
 	string str = readFile(".vscode/BasicTest.txt");
 	// string str = readFile("Tupul.cpp");
@@ -17,6 +22,8 @@ int main(int argc, char** args) {
 	// println(tree.methods[0].descr);
 	TupulClass clazz = finishClass(tree);
 	byte** bytes = clazz.methods[0]->run(clazz.methods[0]);
+	long long end = std::chrono::system_clock::now().time_since_epoch().count();
+	printf("%i\n", end - start); 
 	clazz.methods[0]->free(clazz.methods[0]);
 	// https://stackoverflow.com/a/7619315
 	return ((bytes[1][0] & 0xFF) << 24) |

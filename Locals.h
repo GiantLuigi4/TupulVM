@@ -1,5 +1,6 @@
 #include <vector>
 using namespace std;
+#define byte unsigned char
 
 struct Locals {
     public: vector<byte*> locals;
