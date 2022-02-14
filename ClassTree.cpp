@@ -28,7 +28,7 @@ ClassTree createClassTree(string str) {
 
     for (char c : str) {
         byte x = (byte) c;
-        printf("%i %c\n", x, x);
+        // printf("%i %c\n", x, x);
         if (inBlock && should_end(blockCause, x, secondBlock)) {
             inBlock = false;
             
@@ -59,17 +59,17 @@ ClassTree createClassTree(string str) {
             inBlock = true;
         }
         
-        if (x > 200) {
-            //@formatter:off
-            // rust is annoying in the fact that it requires the curlies
-            // this means I can't format my code quite how I'd like to
-                 if (x == 255){printf("255 - class\n")          ;}
-            else if (x == 254){printf("254 - method\n")         ;}
-            else if (x == 253){printf("253 - descriptor\n")     ;}
-            else if (x == 246){printf("246 - end\n")            ;}
-            else            {printf("%i\n", x)                  ;}
-            //@formatter:on
-        }
+        // if (x > 200) {
+        //     //@formatter:off
+        //     // rust is annoying in the fact that it requires the curlies
+        //     // this means I can't format my code quite how I'd like to
+        //          if (x == 255){printf("255 - class\n")          ;}
+        //     else if (x == 254){printf("254 - method\n")         ;}
+        //     else if (x == 253){printf("253 - descriptor\n")     ;}
+        //     else if (x == 246){printf("246 - end\n")            ;}
+        //     else            {printf("%i\n", x)                  ;}
+        //     //@formatter:on
+        // }
         
         if (isName && x == DESCRIPTOR) isName = false;
         if (isName) name += (byte) x;

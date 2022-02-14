@@ -10,9 +10,8 @@ class TupulMethod {
     public: string name = 0;
     public: string descr = 0;
     public: long context;
-    public: byte* (*run)(TupulMethod*); // TODO: args
+    public: byte** (*run)(TupulMethod*); // TODO: args
     public: void (*free)(TupulMethod*); // TODO: args
-    public: virtual void set(string name, string descr) = 0;
     public: virtual ~TupulMethod() = default;
 };
 
@@ -25,8 +24,7 @@ class InterpretedMethod : public TupulMethod {
     // once a method is compiled, it no longer needs to be interpreted, and thus the instructions can be freed
     public: void freeMethod();
     public: void setupMethod(vector<Insn> insns);
-    public: void set(string name, string descr);
 };
 
-byte* execInterp(TupulMethod* method);
+byte** execInterp(TupulMethod* method);
 void freeInterpMethod(TupulMethod* method);

@@ -22,7 +22,7 @@ void println(string str) {
 #include <codecvt>
 char* readFile(string name) {
     FILE* fp;
-    println(name);
+    // println(name);
     fp = fopen(name.c_str(), "r");
     if (fp == null) {
         printf("File not found\n");

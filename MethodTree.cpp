@@ -40,19 +40,19 @@ MethodTree methodTreeFor(vector<byte> blockDescr, vector<byte> blockFunc) {
     string arg1 = "";
     for (char c : blockFunc) {
         byte x = (byte) c;
-        if (x > 200) {
-            //@formatter:off
-                 if (x == 253){printf("253 - descriptor\n")    ;}
-            else if (x == 252){printf("252 - local\n")         ;}
-            else if (x == 251){printf("251 - push\n")          ;}
-            else if (x == 250){printf("250 - pop\n")           ;}
-            else if (x == 249){printf("249 - loadc\n")         ;}
-            else if (x == 248){printf("248 - setl\n")          ;}
-            else if (x == 243){printf("243 - return\n")        ;}
-            else if (x == 242){printf("242 - loadl\n")         ;}
-            else              {printf("%i\n", x)               ;}
-            //@formatter:on
-        }
+        // if (x > 200) {
+        //     //@formatter:off
+        //          if (x == 253){printf("253 - descriptor\n")    ;}
+        //     else if (x == 252){printf("252 - local\n")         ;}
+        //     else if (x == 251){printf("251 - push\n")          ;}
+        //     else if (x == 250){printf("250 - pop\n")           ;}
+        //     else if (x == 249){printf("249 - loadc\n")         ;}
+        //     else if (x == 248){printf("248 - setl\n")          ;}
+        //     else if (x == 243){printf("243 - return\n")        ;}
+        //     else if (x == 242){printf("242 - loadl\n")         ;}
+        //     else              {printf("%i\n", x)               ;}
+        //     //@formatter:on
+        // }
         
         if (isOpcode(x)) {
             if (x != DESCRIPTOR) {
