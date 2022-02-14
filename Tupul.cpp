@@ -18,6 +18,7 @@ int main(int argc, char** args) {
 	TupulClass clazz = finishClass(tree);
 	byte** bytes = clazz.methods[0]->run(clazz.methods[0]);
 	clazz.methods[0]->free(clazz.methods[0]);
+	// https://stackoverflow.com/a/7619315
 	return ((bytes[1][0] & 0xFF) << 24) |
 		((bytes[1][1] & 0xFF) << 16) |
 		((bytes[1][2] & 0xFF) << 8) |

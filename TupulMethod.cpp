@@ -54,11 +54,11 @@ byte** execInterp(TupulMethod* method) {
                     // https://stackoverflow.com/a/4442669
                     int i = stoi(insn.arg0);
                     byte* bytes = (byte*) calloc(sizeof(byte), 4);
-                    // https://stackoverflow.com/a/5585569
-                    bytes[0] =  i & 0x000000ff;
-                    bytes[1] = (i & 0x0000ff00) >> 8;
-                    bytes[2] = (i & 0x00ff0000) >> 16;
-                    bytes[3] = (i & 0xff000000) >> 24;
+                    // https://stackoverflow.com/a/43515755
+                    bytes[0] = (i >> 24) & 0xFF;
+                    bytes[1] = (i >> 16) & 0xFF;
+                    bytes[2] = (i >> 8) & 0xFF;
+                    bytes[3] = i & 0xFF;
                     locals.stack.push_back(bytes);
                     // TODO: primitive types file
                     byte* type = (byte*) calloc(sizeof(byte), 2);
@@ -72,7 +72,7 @@ byte** execInterp(TupulMethod* method) {
                             int i = stoi(insn.arg0);
                             // printf("%i\n", i);
                             byte* bytes = (byte*) calloc(sizeof(byte), 4);
-                            // https://stackoverflow.com/a/5585569
+                            // https://stackoverflow.com/a/43515755
                             bytes[0] = (i >> 24) & 0xFF;
                             bytes[1] = (i >> 16) & 0xFF;
                             bytes[2] = (i >> 8) & 0xFF;
