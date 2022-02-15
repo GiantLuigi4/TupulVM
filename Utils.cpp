@@ -36,14 +36,19 @@ char* readFile(string name) {
     char* contents = (char*) calloc(sizeof(char), len);
     fread(contents, sizeof(char), len, fp);
 
-    // https://en.cppreference.com/w/cpp/locale/wstring_convert/from_bytes
-    // TODO: get this to not throw on windows
-    u16string utf16 = wstring_convert<codecvt_utf8_utf16<char16_t>, char16_t>{}.from_bytes(((string) contents).data());
-    char* out = (char*) calloc(sizeof(char), utf16.length());
-    for (int i = 0; i < utf16.length(); i++) out[i] = utf16[i];
-
     fclose(fp); // fclose frees fp
-    free(contents);
+    // bytecode spec: class name opcode must be the first character of the file
+    // reason: actually makes it easier to check encoding, and thus also easier to deal with encoding accordingly
+    // https://en.cppreference.com/w/cpp/locale/wstring_convert/from_bytes
+    if (contents[0] == -61) {
+        u16string utf16 = wstring_convert<codecvt_utf8_utf16<char16_t>, char16_t>{}.from_bytes(((string) contents).data());
+        char* out = (char*) calloc(sizeof(char), utf16.length());
+        for (int i = 0; i < utf16.length(); i++) out[i] = utf16[i];
+        
+        free(contents);
+        return out;
+    }
 
-    return out;
+
+    return contents;
 }
