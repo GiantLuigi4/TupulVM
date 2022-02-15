@@ -8,9 +8,8 @@
             "args": [
                 "-g", "${workspaceFolder}/*.cpp",
                 "-o", "${workspaceFolder}/.vscode/program.exe",
-                "-lglfw",
-                "-lGL",
-                "-O3" // I might as well
+                "-O3", // I might as well
+                "-fpermissive", // windows moment
             ],
             "options": {
                 "cwd": "${workspaceFolder}"
