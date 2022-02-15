@@ -3,9 +3,9 @@
 #include "Opcodes.h"
 
 TupulMethod* finishMethod(MethodTree tree) {
-    InterpretedMethod* method = (InterpretedMethod*) calloc(sizeof(InterpretedMethod), 1);
+    TupulMethod* method = (TupulMethod*) calloc(sizeof(TupulMethod), 1);
     // method.name = tree.name;
-    method->setupMethod(tree.insns);
+    setupInterpretedMethod(method, tree.insns);
     // method.descr = tree.descr;
     // method[0].set(tree.name, tree.descr);
     method->name = tree.name;

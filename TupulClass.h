@@ -6,7 +6,7 @@ struct ClassLoader;
 
 using namespace std;
 
-class TupulClass {
+struct TupulClass {
 	public: string name;
 	public: ClassLoader* loader;
 	public: vector<TupulMethod*> methods;

@@ -6,25 +6,18 @@
 using namespace std;
 
 // TODO: figure out some way to automate binding native methods to tupul methods :wheeze:
-class TupulMethod {
-    public: string name = 0;
-    public: string descr = 0;
-    public: long context;
+struct TupulMethod {
+    public: string name = "";
+    public: string descr = "";
+    public: long context = 0;
     public: byte** (*run)(TupulMethod*); // TODO: args
-    public: void (*free)(TupulMethod*); // TODO: args
-    public: virtual ~TupulMethod() = default;
+    public: void (*free)(TupulMethod*);
 };
 
 // class CompiledMethod : TupulMethod {
 //     // TODO: learn how to do this
 // };
 
-class InterpretedMethod : public TupulMethod {
-    // called after compiliation or when the owning class gets offloaded
-    // once a method is compiled, it no longer needs to be interpreted, and thus the instructions can be freed
-    public: void freeMethod();
-    public: void setupMethod(vector<Insn> insns);
-};
-
+void setupInterpretedMethod(TupulMethod* method, vector<Insn> insns);
 byte** execInterp(TupulMethod* method);
 void freeInterpMethod(TupulMethod* method);
