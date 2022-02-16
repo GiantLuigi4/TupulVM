@@ -50,6 +50,7 @@ MethodTree methodTreeFor(vector<byte> blockDescr, vector<byte> blockFunc) {
         //     else if (x == 248){printf("248 - setl\n")          ;}
         //     else if (x == 243){printf("243 - return\n")        ;}
         //     else if (x == 242){printf("242 - loadl\n")         ;}
+        //     else if (x == 241){printf("241 - math\n")          ;}
         //     else              {printf("%i\n", x)               ;}
         //     //@formatter:on
         // }

@@ -10,7 +10,6 @@ using namespace std;
 
 int main(int argc, char** args) {
 	// https://stackoverflow.com/a/12938135
-	long long start = std::chrono::system_clock::now().time_since_epoch().count();
 
 	// println(absolutePath(".vscode/BasicTest.txt"));
 	string str = readFile(".vscode/BasicTest.txt");
@@ -21,6 +20,7 @@ int main(int argc, char** args) {
 	// println(tree.methods[0].name);
 	// println(tree.methods[0].descr);
 	TupulClass clazz = finishClass(tree);
+	long long start = std::chrono::system_clock::now().time_since_epoch().count();
 	byte** bytes = clazz.methods[0]->run(clazz.methods[0]);
 	long long end = std::chrono::system_clock::now().time_since_epoch().count();
 	printf("%i\n", end - start); 

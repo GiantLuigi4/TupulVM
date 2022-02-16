@@ -10,6 +10,7 @@ byte LOCAL = 252;
 byte LOADC = 249;
 byte SETL = 248;
 byte LOADL = 242;
+byte MATH = 241;
 
 byte PUSH = 251;
 byte POP = 250;
@@ -38,5 +39,6 @@ bool is_expanded_opcode(byte op) {
         op == LOCAL ||
         op == SETL ||
         op == LOADC ||
+        op == MATH ||
         op == LOADL;
 }

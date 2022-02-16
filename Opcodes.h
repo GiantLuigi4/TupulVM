@@ -12,6 +12,7 @@ extern byte LOCAL;
 extern byte LOADC;
 extern byte SETL;
 extern byte LOADL;
+extern byte MATH;
 
 extern byte PUSH;
 extern byte POP;

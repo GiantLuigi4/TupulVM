@@ -43,6 +43,30 @@ byte** execInterp(TupulMethod* method) {
         switch (x) {
             case 252: // LOCAL
                 locals.locals.push_back((byte*)0);
+                switch (insn.arg1[0]) {
+                    case 'I':
+                        locals.localTypes.push_back(INT);
+                        break;
+                    case 'L':
+                        locals.localTypes.push_back(LONG);
+                        break;
+                    case 'D':
+                        locals.localTypes.push_back(DOUBLE);
+                        break;
+                    case 'H':
+                        locals.localTypes.push_back(HALF);
+                        break;
+                    case 'F':
+                        locals.localTypes.push_back(FLOAT);
+                        break;
+                    case 'C':
+                        locals.localTypes.push_back(CHAR);
+                        break;
+                    case 'S':
+                        locals.localTypes.push_back(SHORT);
+                        break;
+                    // TODO: byte, boolean
+                }
                 break;
             case 251: // PUSH
                 locals.pushPoints.push_back(locals.stack.size());
@@ -82,9 +106,11 @@ byte** execInterp(TupulMethod* method) {
             case 248: {// SETL
                     int i1 = locals.stack.size() - 1;
                     locals.locals[stoi(insn.arg0)] = locals.stack[i1];
+                    // locals.localTypes.push_back(locals.stackTypes[i1]);
+                    // TODO: cast from stack type to local type if they are not of the same times
                     locals.stack.pop_back();
-                    locals.localTypes.push_back(locals.stackTypes[i1]);
-                    locals.localTypes.pop_back();
+                    locals.stackTypes.pop_back();
+                    // TODO: cast to type of local
                 }
                 break;
             case 242: {// LOADL
@@ -109,6 +135,26 @@ byte** execInterp(TupulMethod* method) {
                     locals.stackTypes.pop_back();
                     freeLocals(locals);
                     return output;
+                }
+                break;
+            case 241: {
+                    int stackSize = locals.stack.size() - 1;
+                    byte* bytes0 = locals.stack[stackSize];
+                    byte* type0 = locals.stackTypes[stackSize];
+                    stackSize--;
+                    byte* bytes1 = locals.stack[stackSize];
+                    byte* type1 = locals.stackTypes[stackSize];
+                    locals.stack.pop_back();
+                    locals.stack.pop_back();
+                    locals.stackTypes.pop_back();
+                    locals.stackTypes.pop_back();
+                    // printf("%s\n", insn.arg0);
+
+                    byte** typeOut = (byte**) calloc(sizeof(byte*), 1);
+                    byte* result = tupSum(bytes0, type0, bytes1, type1, typeOut);
+
+                    locals.stack.push_back(result);
+                    locals.stackTypes.push_back(typeOut[0]);
                 }
                 break;
         }
