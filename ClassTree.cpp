@@ -4,14 +4,14 @@
 #include "Opcodes.h"
 #include "TupulClass.h"
 
-TupulClass finishClass(ClassTree tree) {
-    TupulClass clazz;
+TupulClass* finishClass(ClassTree tree) {
+    TupulClass* clazz = (TupulClass*) malloc(sizeof(TupulClass));
     vector<TupulMethod*> methods;
     for (MethodTree methodTree : tree.methods) {
-        methods.push_back(finishMethod(methodTree));
+        methods.push_back(finishMethod(methodTree, clazz));
     }
-    clazz.methods = methods;
-    clazz.name = tree.name;
+    clazz->methods = methods;
+    clazz->name = tree.name;
     return clazz;
 }
 
@@ -24,7 +24,7 @@ ClassTree createClassTree(string str) {
     bool inBlock = false;
     bool secondBlock = false;
     byte blockCause = 0;
-    vector<MethodTree> methods; // TODO:
+    vector<MethodTree> methods;
 
     for (char c : str) {
         byte x = (byte) c;
@@ -36,6 +36,11 @@ ClassTree createClassTree(string str) {
             if (blockCause == METHOD) {
                 MethodTree mTree = methodTreeFor(block0, block1);
                 methods.push_back(mTree);
+                block0.clear();
+                block1.clear();
+                isName = false;
+                inBlock = false;
+                secondBlock = false;
             }
             //@formatter:on
             
@@ -61,13 +66,13 @@ ClassTree createClassTree(string str) {
         
         // if (x > 200) {
         //     //@formatter:off
-        //     // rust is annoying in the fact that it requires the curlies
-        //     // this means I can't format my code quite how I'd like to
+        //     // not like I have a formatter but ok'
+        //     // was originally rust code
         //          if (x == 255){printf("255 - class\n")          ;}
         //     else if (x == 254){printf("254 - method\n")         ;}
-        //     else if (x == 253){printf("253 - descriptor\n")     ;}
+        //     else if (x == 253){printf("253 - descriptor a\n")   ;}
         //     else if (x == 246){printf("246 - end\n")            ;}
-        //     else            {printf("%i\n", x)                  ;}
+        //     else              {printf("%i c\n", x)              ;}
         //     //@formatter:on
         // }
         
@@ -75,7 +80,10 @@ ClassTree createClassTree(string str) {
         if (isName) name += (byte) x;
         if (x == CLASS) isName = true;
     }
-    tree.name = name;
+    char* namen = (char*) calloc(sizeof(char), name.length() + 1);
+    for (int i = 0; i < name.length(); i++) namen[i] = name[i];
+    namen[name.length()] = (char) nullptr;
+    tree.name = namen;
     tree.methods = methods;
     return tree;
 }

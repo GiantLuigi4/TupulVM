@@ -3,7 +3,7 @@
 /* begin interpreted methods */
 
 // it's disgusting, but it works
-void setupInterpretedMethod(TupulMethod* method, vector<Insn> insns) {
+void setupInterpretedMethod(TupulMethod* method, vector<Insn> insns, TupulClass* clazz) {
     Insn* insnsPtr = (Insn*) calloc(sizeof(Insn), insns.size()); // create a pointer which will be used as a list of insns
     for (int i = 0; i < insns.size(); i++) insnsPtr[i] = insns[i]; // copy the vector's contents to the pointer
     Insn** insnsPtrPtr = (Insn**) calloc(sizeof(Insn*), 2); // create a list of two "Insn*"s, only one of which will be an Insn*
@@ -13,6 +13,7 @@ void setupInterpretedMethod(TupulMethod* method, vector<Insn> insns) {
 
     method->run = execInterp; // run method
     method->free = freeInterpMethod; // run method
+    method->owner = clazz;
     // yeah idk, C++ is weird :wheeze:
 }
 
@@ -20,6 +21,7 @@ void setupInterpretedMethod(TupulMethod* method, vector<Insn> insns) {
 #include "Locals.h"
 #include "Opcodes.h"
 #include "Types.h"
+#include "TupulClass.h"
 byte** execInterp(TupulMethod* method) {
     Insn** insns = (Insn**) method->context;
     long len = (long) insns[1];
@@ -88,45 +90,81 @@ byte** execInterp(TupulMethod* method) {
                     locals.stackTypes.push_back(INT);
                 } else {
                     switch (insn.arg1[0]) {
-                        case 'I':
-                            // https://stackoverflow.com/a/4442669
-                            int i = stoi(insn.arg0);
-                            byte* bytes = (byte*) calloc(sizeof(byte), 4);
-                            // https://stackoverflow.com/a/43515755
-                            bytes[0] = (i >> 24) & 0xFF;
-                            bytes[1] = (i >> 16) & 0xFF;
-                            bytes[2] = (i >> 8) & 0xFF;
-                            bytes[3] = i & 0xFF;
-                            locals.stack.push_back(bytes);
-                            locals.stackTypes.push_back(INT);
+                        case 'I': {
+                                // https://stackoverflow.com/a/4442669
+                                int i = stoi(insn.arg0);
+                                byte* bytes = (byte*) calloc(sizeof(byte), 4);
+                                // https://stackoverflow.com/a/43515755
+                                bytes[0] = (i >> 24) & 0xFF;
+                                bytes[1] = (i >> 16) & 0xFF;
+                                bytes[2] = (i >> 8) & 0xFF;
+                                bytes[3] = i & 0xFF;
+                                locals.stack.push_back(bytes);
+                                locals.stackTypes.push_back(INT);
+                            }
+                            break;
+                        case 'L': {
+                                // https://stackoverflow.com/a/4442669
+                                long long i = stol(insn.arg0);
+                                byte* bytes = (byte*) calloc(sizeof(byte), 8);
+                                // https://stackoverflow.com/a/43515755
+                                bytes[0] = (i >> (long) 56) & 0xFF;
+                                bytes[1] = (i >> (long) 48) & 0xFF;
+                                bytes[2] = (i >> (long) 40) & 0xFF;
+                                bytes[3] = (i >> (long) 32) & 0xFF;
+                                bytes[4] = (i >> 24) & 0xFF;
+                                bytes[5] = (i >> 16) & 0xFF;
+                                bytes[6] = (i >> 8) & 0xFF;
+                                bytes[7] = i & 0xFF;
+                                locals.stack.push_back(bytes);
+                                locals.stackTypes.push_back(LONG);
+                            }
                             break;
                     }
                 }
                 break;
             case 248: {// SETL
+                // TODO: make stuff not get lost from memory
                     int i1 = locals.stack.size() - 1;
-                    locals.locals[stoi(insn.arg0)] = locals.stack[i1];
-                    // locals.localTypes.push_back(locals.stackTypes[i1]);
-                    // TODO: cast from stack type to local type if they are not of the same times
+                    int i2 = stoi(insn.arg0);
+                    byte* stackElement = locals.stack[i1];
+                    // int i0 = ((stackElement[0] & 0xFF) << 24) |
+                    //     ((stackElement[1] & 0xFF) << 16) |
+                    //     ((stackElement[2] & 0xFF) <<  8) |
+                    //     ((stackElement[3] & 0xFF) <<  0) ;
+                    // printf("stack type = %i\n", locals.stackTypes[i1]);
+                    // printf("stack element = %i\n", i0);
+                    byte* out = tupCast(stackElement, locals.stackTypes[i1], locals.localTypes[i2]);
+                    // i0 = ((out[0] & 0xFF) << 24) |
+                    //     ((out[1] & 0xFF) << 16) |
+                    //     ((out[2] & 0xFF) <<  8) |
+                    //     ((out[3] & 0xFF) <<  0) ;
+                    free(stackElement);
+                    freeType(locals.stackTypes[i1]);
+
                     locals.stack.pop_back();
                     locals.stackTypes.pop_back();
-                    // TODO: cast to type of local
+                    // locals.stack.push_back(out);
+                    // locals.stackTypes.push_back(locals.localTypes[i2]);
+                    locals.locals[i2] = out;
                 }
                 break;
             case 242: {// LOADL
-                    locals.stack.push_back(locals.locals[stoi(insn.arg0)]);
-                    locals.stackTypes.push_back(locals.localTypes[stoi(insn.arg0)]);
+                    int i = stoi(insn.arg0);
+                    locals.stack.push_back(locals.locals[i]);
+                    locals.stackTypes.push_back(locals.localTypes[i]);
                 }
                 break;
             case 243: { // RETURN
-                    byte* bytes = locals.stack[locals.stack.size() - 1];
                     byte** output = (byte**) calloc(sizeof(byte*), 2);
+                    byte* bytes = locals.stack[locals.stack.size() - 1];
                     byte* type = locals.stackTypes[locals.stackTypes.size() - 1];
 
                     byte* typeCopy = copyType(type);
-                    short len = getTypeLength(typeCopy);
+                    int len = getTypeLength(typeCopy);
                     byte* bytesCopy = (byte*) calloc(sizeof(byte), len);
-                    for (short i = 0; i < len; i++) bytesCopy[i] = bytes[i];
+                    for (int i = 0; i < len; i++) 
+                        bytesCopy[i] = bytes[i];
 
                     output[0] = typeCopy;
                     output[1] = bytesCopy;
@@ -152,9 +190,39 @@ byte** execInterp(TupulMethod* method) {
 
                     byte** typeOut = (byte**) calloc(sizeof(byte*), 1);
                     byte* result = tupSum(bytes0, type0, bytes1, type1, typeOut);
+                    // long long i0 = (((long long) result[0] & 0xFF) << 56) |
+                    //    (((long long) result[1] & 0xFF) << 48) |
+                    //    (((long long) result[2] & 0xFF) << 40) |
+                    //    (((long long) result[3] & 0xFF) << 32) |
+                    //    (((long long) result[4] & 0xFF) << 24) |
+                    //    (((long long) result[5] & 0xFF) << 16) |
+                    //    (((long long) result[6] & 0xFF) <<  8) |
+                    //    (((long long) result[7] & 0xFF) <<  0) ;
+                    // printf("result = %i\n", i0);
+                    free(bytes0);
+                    free(bytes1);
+                    freeType(type0);
+                    freeType(type1);
+                    // i0 = (((long long) result[0] & 0xFF) << 56) |
+                    //    (((long long) result[1] & 0xFF) << 48) |
+                    //    (((long long) result[2] & 0xFF) << 40) |
+                    //    (((long long) result[3] & 0xFF) << 32) |
+                    //    (((long long) result[4] & 0xFF) << 24) |
+                    //    (((long long) result[5] & 0xFF) << 16) |
+                    //    (((long long) result[6] & 0xFF) <<  8) |
+                    //    (((long long) result[7] & 0xFF) <<  0) ;
+                    // printf("result = %i\n", i0);
 
                     locals.stack.push_back(result);
                     locals.stackTypes.push_back(typeOut[0]);
+                }
+                break;
+            case 240: {
+                    TupulMethod* toInvoke = getMethod(method->owner, insn.arg0, insn.arg1);
+                    byte** result = toInvoke->run(toInvoke);
+                    locals.stack.push_back(result[1]);
+                    locals.stackTypes.push_back(result[0]);
+                    free(result); // frees the pointer to the pointers, does not free the pointers themselves
                 }
                 break;
         }

@@ -13,5 +13,6 @@ void freeType(byte* type); // frees only non-primitives, as those are the only t
 // TODO: find better name
 byte* copyType(byte* src); // copies the type if the type is a non-primitive, elsewise returns the source
 short getTypeLength(byte* type);
+byte* tupCast(byte* val, byte* typeSrc, byte* typeDst);
 byte* tupSum(byte* num0, byte* type0, byte* num1, byte* type1, byte** type);
 byte* preferredType(byte* type0, byte* type1);

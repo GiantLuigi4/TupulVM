@@ -8,6 +8,8 @@ using namespace std;
 
 #define byte unsigned char
 
+struct TupulClass;
+
 struct MethodTree {
     public: string name;
     public: string descr;
@@ -15,5 +17,5 @@ struct MethodTree {
 };
 
 MethodTree methodTreeFor(vector<byte> blockDescr, vector<byte> blockFunc);
-TupulMethod* finishMethod(MethodTree tree);
+TupulMethod* finishMethod(MethodTree tree, TupulClass* clazz);
 // TODO: complete

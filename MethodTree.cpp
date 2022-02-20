@@ -2,10 +2,10 @@
 #include "Insn.h"
 #include "Opcodes.h"
 
-TupulMethod* finishMethod(MethodTree tree) {
+TupulMethod* finishMethod(MethodTree tree, TupulClass* clazz) {
     TupulMethod* method = (TupulMethod*) calloc(sizeof(TupulMethod), 1);
     // method.name = tree.name;
-    setupInterpretedMethod(method, tree.insns);
+    setupInterpretedMethod(method, tree.insns, clazz);
     // method.descr = tree.descr;
     // method[0].set(tree.name, tree.descr);
     method->name = tree.name;
@@ -60,10 +60,12 @@ MethodTree methodTreeFor(vector<byte> blockDescr, vector<byte> blockFunc) {
                 if (opcode != 0) {
                     if (inBlock) {
                         if (second) {
-                            char* firstArg = (char*) calloc(sizeof(char), arg0.length());
+                            char* firstArg = (char*) calloc(sizeof(char), arg0.length() + 1);
                             for (int i = 0; i < arg0.length(); i++) firstArg[i] = arg0[i];
-                            char* secondArg = (char*) calloc(sizeof(char), arg1.length());
+                            firstArg[arg0.length()] = (char) nullptr;
+                            char* secondArg = (char*) calloc(sizeof(char), arg1.length() + 1);
                             for (int i = 0; i < arg1.length(); i++) secondArg[i] = arg1[i];
+                            secondArg[arg1.length()] = (char) nullptr;
                             Insn insn = Insn { op: opcode, arg0: firstArg, arg1: secondArg };
                             insns.push_back(insn);
                             // println!("{:?}", insn.borrow());
@@ -72,8 +74,9 @@ MethodTree methodTreeFor(vector<byte> blockDescr, vector<byte> blockFunc) {
                             second = false;
                             inBlock = false;
                         } else {
-                            char* firstArg = (char*) calloc(sizeof(char), arg0.length());
+                            char* firstArg = (char*) calloc(sizeof(char), arg0.length() + 1);
                             for (int i = 0; i < arg0.length(); i++) firstArg[i] = arg0[i];
+                            firstArg[arg0.length()] = (char) nullptr;
                             Insn insn = Insn { op: opcode, arg0: firstArg, arg1: nullptr };
                             insns.push_back(insn);
                             // println!("{:?}", insn);
@@ -115,16 +118,19 @@ MethodTree methodTreeFor(vector<byte> blockDescr, vector<byte> blockFunc) {
     if (opcode != 0) {
         if (inBlock) {
             if (second) {
-                char* firstArg = (char*) calloc(sizeof(char), arg0.length());
+                char* firstArg = (char*) calloc(sizeof(char), arg0.length() + 1);
                 for (int i = 0; i < arg0.length(); i++) firstArg[i] = arg0[i];
-                char* secondArg = (char*) calloc(sizeof(char), arg1.length());
+                firstArg[arg0.length()] = (char) nullptr;
+                char* secondArg = (char*) calloc(sizeof(char), arg1.length() + 1);
                 for (int i = 0; i < arg1.length(); i++) secondArg[i] = arg1[i];
+                secondArg[arg1.length()] = (char) nullptr;
                 Insn insn = Insn { op: opcode, arg0: firstArg, arg1: secondArg };
                 insns.push_back(insn);
                 // println!("{:?}", insn.borrow());
             } else {
-                char* firstArg = (char*) calloc(sizeof(char), arg0.length());
+                char* firstArg = (char*) calloc(sizeof(char), arg0.length() + 1);
                 for (int i = 0; i < arg0.length(); i++) firstArg[i] = arg0[i];
+                firstArg[arg0.length()] = (char) nullptr;
                 Insn insn = Insn { op: opcode, arg0: firstArg, arg1: nullptr };
                 insns.push_back(insn);
                 // println!("{:?}", insn);

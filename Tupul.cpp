@@ -19,15 +19,15 @@ int main(int argc, char** args) {
 	// printf("%i\n", tree.methods.size());
 	// println(tree.methods[0].name);
 	// println(tree.methods[0].descr);
-	TupulClass clazz = finishClass(tree);
+	TupulClass* clazz = finishClass(tree);
 	long long start = std::chrono::high_resolution_clock::now().time_since_epoch().count();
-	byte** bytes = clazz.methods[0]->run(clazz.methods[0]);
+	byte** bytes = clazz->methods[0]->run(clazz->methods[0]);
 	long long end = std::chrono::high_resolution_clock::now().time_since_epoch().count();
 	printf("%i\n", end - start); 
-	clazz.methods[0]->free(clazz.methods[0]);
+	clazz->methods[0]->free(clazz->methods[0]);
 	// https://stackoverflow.com/a/7619315
 	return ((bytes[1][0] & 0xFF) << 24) |
-		((bytes[1][1] & 0xFF) << 16) |
-		((bytes[1][2] & 0xFF) << 8) |
-		((bytes[1][3] & 0xFF) << 0);
+			((bytes[1][1] & 0xFF) << 16) |
+			((bytes[1][2] & 0xFF) << 8) |
+			((bytes[1][3] & 0xFF) << 0);
 }

@@ -8,9 +8,9 @@ using namespace std;
 #define byte unsigned char
 
 struct ClassTree {
-    public: string name;
+    public: char* name;
     public: vector<MethodTree> methods;
 };
 
 ClassTree createClassTree(string contents);
-TupulClass finishClass(ClassTree tree);
+TupulClass* finishClass(ClassTree tree);
