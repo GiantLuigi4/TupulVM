@@ -5,7 +5,7 @@
 #include "TupulClass.h"
 
 TupulClass* finishClass(ClassTree tree) {
-    TupulClass* clazz = (TupulClass*) malloc(sizeof(TupulClass));
+    TupulClass* clazz = (TupulClass*) calloc(sizeof(TupulClass), 1);
     vector<TupulMethod*> methods;
     for (MethodTree methodTree : tree.methods) {
         methods.push_back(finishMethod(methodTree, clazz));
@@ -82,7 +82,7 @@ ClassTree createClassTree(string str) {
     }
     char* namen = (char*) calloc(sizeof(char), name.length() + 1);
     for (int i = 0; i < name.length(); i++) namen[i] = name[i];
-    namen[name.length()] = (char) nullptr;
+    namen[name.length()] = 0;
     tree.name = namen;
     tree.methods = methods;
     return tree;

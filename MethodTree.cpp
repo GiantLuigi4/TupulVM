@@ -62,10 +62,10 @@ MethodTree methodTreeFor(vector<byte> blockDescr, vector<byte> blockFunc) {
                         if (second) {
                             char* firstArg = (char*) calloc(sizeof(char), arg0.length() + 1);
                             for (int i = 0; i < arg0.length(); i++) firstArg[i] = arg0[i];
-                            firstArg[arg0.length()] = (char) nullptr;
+                            firstArg[arg0.length()] = 0;
                             char* secondArg = (char*) calloc(sizeof(char), arg1.length() + 1);
                             for (int i = 0; i < arg1.length(); i++) secondArg[i] = arg1[i];
-                            secondArg[arg1.length()] = (char) nullptr;
+                            secondArg[arg1.length()] = 0;
                             Insn insn = Insn { op: opcode, arg0: firstArg, arg1: secondArg };
                             insns.push_back(insn);
                             // println!("{:?}", insn.borrow());
@@ -76,7 +76,7 @@ MethodTree methodTreeFor(vector<byte> blockDescr, vector<byte> blockFunc) {
                         } else {
                             char* firstArg = (char*) calloc(sizeof(char), arg0.length() + 1);
                             for (int i = 0; i < arg0.length(); i++) firstArg[i] = arg0[i];
-                            firstArg[arg0.length()] = (char) nullptr;
+                            firstArg[arg0.length()] = 0;
                             Insn insn = Insn { op: opcode, arg0: firstArg, arg1: nullptr };
                             insns.push_back(insn);
                             // println!("{:?}", insn);
@@ -120,17 +120,17 @@ MethodTree methodTreeFor(vector<byte> blockDescr, vector<byte> blockFunc) {
             if (second) {
                 char* firstArg = (char*) calloc(sizeof(char), arg0.length() + 1);
                 for (int i = 0; i < arg0.length(); i++) firstArg[i] = arg0[i];
-                firstArg[arg0.length()] = (char) nullptr;
+                firstArg[arg0.length()] = 0;
                 char* secondArg = (char*) calloc(sizeof(char), arg1.length() + 1);
                 for (int i = 0; i < arg1.length(); i++) secondArg[i] = arg1[i];
-                secondArg[arg1.length()] = (char) nullptr;
+                secondArg[arg1.length()] = 0;
                 Insn insn = Insn { op: opcode, arg0: firstArg, arg1: secondArg };
                 insns.push_back(insn);
                 // println!("{:?}", insn.borrow());
             } else {
                 char* firstArg = (char*) calloc(sizeof(char), arg0.length() + 1);
                 for (int i = 0; i < arg0.length(); i++) firstArg[i] = arg0[i];
-                firstArg[arg0.length()] = (char) nullptr;
+                firstArg[arg0.length()] = 0;
                 Insn insn = Insn { op: opcode, arg0: firstArg, arg1: nullptr };
                 insns.push_back(insn);
                 // println!("{:?}", insn);

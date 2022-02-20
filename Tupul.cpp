@@ -23,7 +23,7 @@ int main(int argc, char** args) {
 	long long start = std::chrono::high_resolution_clock::now().time_since_epoch().count();
 	byte** bytes = clazz->methods[0]->run(clazz->methods[0]);
 	long long end = std::chrono::high_resolution_clock::now().time_since_epoch().count();
-	printf("%i\n", end - start); 
+	printf("%i\n", end - start);
 	clazz->methods[0]->free(clazz->methods[0]);
 	// https://stackoverflow.com/a/7619315
 	return ((bytes[1][0] & 0xFF) << 24) |
