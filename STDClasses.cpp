@@ -61,6 +61,43 @@ void freeSTDMethod(TupulMethod* method) {
     free(method);
 }
 
+// 0 == sys/time (linux only)
+// 1 == ctime (may not be as precise)
+// 2 == chrono (may not be accurate)
+// 3 == QPC (may not work in vms, windows only currently... I think there's a way to do it in linux but idk)
+#ifdef __unix__
+    #define defaultTimeMeasure 0
+#elif defined(WIN32) || defined(_WIN32)
+    #define defaultTimeMeasure 1
+#else
+    #define defaultTimeMeasure 1
+#endif
+#define timeMeasure defaultTimeMeasure
+
+#if timeMeasure == 0
+	#include <sys/time.h>
+#elif timeMeasure == 1
+	#include <time.h>
+#else
+	#include <chrono>
+#endif
+
+long long getTime() {
+    #if timeMeasure == 0
+		timespec ts;
+		clock_gettime(CLOCK_REALTIME, &ts);
+		long long start = ts.tv_nsec;
+        return start;
+	#elif timeMeasure == 1
+		clock_t clockTime = clock();
+        return (((float)clockTime)/CLOCKS_PER_SEC) * 1000000000L;
+	#else
+		long long start = std::chrono::high_resolution_clock::now().time_since_epoch().count();
+        return start;
+		// TODO: QPC
+	#endif
+}
+
 TupulMethod* makeSTDMethod(TupulClass* clazz, string name, string descr, byte** (*exec)(TupulMethod*,Locals*)) {
     // this just be how native methods be, yk
     TupulMethod* method = (TupulMethod*) calloc(sizeof(TupulMethod), 1);

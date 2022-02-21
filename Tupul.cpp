@@ -26,10 +26,10 @@ int main(int argc, char** args) {
 	ClassLoader* ldr = (ClassLoader*) calloc(sizeof(ClassLoader), 1);
 	TupulClass* clazz = finishClass(tree);
 	clazz->loader = ldr;
-	long long start = getTime();
+	long long start = getTimeForPerformance();
 	Locals* locals = (Locals*) calloc(sizeof(Locals), 1);
 	byte** bytes = clazz->methods[0]->run(clazz->methods[0], locals);
-	long long end = getTime();
+	long long end = getTimeForPerformance();
 	long long time = end - start;
 	printf("%i nanoseconds\n", time);
 	clazz->methods[0]->free(clazz->methods[0]);

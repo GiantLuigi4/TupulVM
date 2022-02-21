@@ -73,32 +73,50 @@ char* readFile(string name) {
 // http://www.cplusplus.com/reference/ctime/clock/
 // https://stackoverflow.com/questions/275004/timer-function-to-provide-time-in-nano-seconds-using-c
 // 
-// 0 == sys/time (linux only, I think?)
+// 0 == sys/time (linux only)
 // 1 == ctime (may not be as precise)
 // 2 == chrono (may not be accurate)
-// 3 == QPC (may not work in vms)
-#define timeMeasure 0
-
-#if timeMeasure == 0
-	#include <sys/time.h>
-#elif timeMeasure == 1
-	#include <time.h>
+// 3 == QPC (may not work in vms, windows only currently... I think there's a way to do it in linux but idk)
+#ifdef __unix__
+    #define defaultPerfMeasure 0
+#elif defined(WIN32) || defined(_WIN32)
+    #define defaultPerfMeasure 3
 #else
+    #define defaultPerfMeasure 1
+#endif
+#define perfMeasure defaultPerfMeasure
+
+#if perfMeasure == 0
+	#include <sys/time.h>
+#elif perfMeasure == 1
+	#include <time.h>
+#elif perfMeasure == 2
 	#include <chrono>
+#else
+    #include <profileapi.h>
 #endif
 
-long long getTime() {
-    #if timeMeasure == 0
+long long getTimeForPerformance() {
+    #if perfMeasure == 0
 		timespec ts;
 		clock_gettime(CLOCK_REALTIME, &ts);
 		long long start = ts.tv_nsec;
         return start;
-	#elif timeMeasure == 1
+	#elif perfMeasure == 1
 		clock_t clockTime = clock();
         return (((float)clockTime)/CLOCKS_PER_SEC) * 1000000000L;
-	#else
+	#elif perfMeasure == 2
 		long long start = std::chrono::high_resolution_clock::now().time_since_epoch().count();
         return start;
 		// TODO: QPC
-	#endif
+	#else
+        LARGE_INTEGER ticks;
+        LARGE_INTEGER FREQ;
+        QueryPerformanceFrequency(&FREQ);
+        QueryPerformanceCounter(&ticks);
+        long long duration = ticks.QuadPart;
+        duration *= 1000000;
+        duration /= FREQ.QuadPart;
+        return duration;
+    #endif
 }
