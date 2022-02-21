@@ -35,7 +35,15 @@ byte** print(TupulMethod* method, Locals* locals) {
                 break;
             }
             case 6: {
-                printf("%s", "NYI");
+                long long i0 = (((long long) local[0] & 0xFF) << 56) |
+                           (((long long) local[1] & 0xFF) << 48) |
+                           (((long long) local[2] & 0xFF) << 40) |
+                           (((long long) local[3] & 0xFF) << 32) |
+                           (((long long) local[4] & 0xFF) << 24) |
+                           (((long long) local[5] & 0xFF) << 16) |
+                           (((long long) local[6] & 0xFF) <<  8) |
+                           (((long long) local[7] & 0xFF) <<  0) ;
+                printf("%lld", i0);
                 break;
             }
             default: {
@@ -67,9 +75,9 @@ void freeSTDMethod(TupulMethod* method) {
 #ifdef __unix__
     #define defaultTimeMeasure 0
 #elif defined(WIN32) || defined(_WIN32)
-    #define defaultTimeMeasure 1
+    #define defaultTimeMeasure 2
 #else
-    #define defaultTimeMeasure 1
+    #define defaultTimeMeasure 0
 #endif
 #define timeMeasure defaultTimeMeasure
 
@@ -97,6 +105,46 @@ long long getTime() {
 	#endif
 }
 
+#include "Types.h"
+byte** getTimeT(TupulMethod* method, Locals* locals) {
+    freeLocals(locals);
+    long long time = getTime();
+
+    byte* out = (byte*) calloc(sizeof(byte), 8);
+    out[0] = (time >> (long long) 56) & 0xFF;
+    out[1] = (time >> (long long) 48) & 0xFF;
+    out[2] = (time >> (long long) 40) & 0xFF;
+    out[3] = (time >> (long long) 32) & 0xFF;
+    out[4] = (time >> 24) & 0xFF;
+    out[5] = (time >> 16) & 0xFF;
+    out[6] = (time >> 8) & 0xFF;
+    out[7] = time & 0xFF;
+    
+    byte** realOut = (byte**) calloc(sizeof(byte*), 2);
+    realOut[1] = out;
+    realOut[0] = LONG;
+    return realOut;
+}
+byte** getTimeM(TupulMethod* method, Locals* locals) {
+    freeLocals(locals);
+    long long time = getTime();
+
+    byte* out = (byte*) calloc(sizeof(byte), 8);
+    out[0] = (time >> (long long) 56) & 0xFF;
+    out[1] = (time >> (long long) 48) & 0xFF;
+    out[2] = (time >> (long long) 40) & 0xFF;
+    out[3] = (time >> (long long) 32) & 0xFF;
+    out[4] = (time >> 24) & 0xFF;
+    out[5] = (time >> 16) & 0xFF;
+    out[6] = (time >> 8) & 0xFF;
+    out[7] = time & 0xFF;
+    
+    byte** realOut = (byte**) calloc(sizeof(byte*), 2);
+    realOut[1] = out;
+    realOut[0] = LONG;
+    return realOut;
+}
+
 TupulMethod* makeSTDMethod(TupulClass* clazz, string name, string descr, byte** (*exec)(TupulMethod*,Locals*)) {
     // this just be how native methods be, yk
     TupulMethod* method = (TupulMethod*) calloc(sizeof(TupulMethod), 1);
@@ -116,6 +164,10 @@ TupulClass* getSTDClass(char* name) {
         TupulMethod* method = makeSTDMethod(clazz, "print", "(*)V", print);
         clazz->methods.push_back(method);
         method = makeSTDMethod(clazz, "println", "(*)V", println);
+        clazz->methods.push_back(method);
+        method = makeSTDMethod(clazz, "nanoTime", "()L", getTimeT);
+        clazz->methods.push_back(method);
+        method = makeSTDMethod(clazz, "milliTime", "()L", getTimeM);
         clazz->methods.push_back(method);
 
         return clazz;

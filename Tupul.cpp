@@ -29,7 +29,7 @@ int main(int argc, char** args) {
 	byte** bytes = clazz->methods[0]->run(clazz->methods[0], locals);
 	long long end = getTimeForPerformance();
 	long long time = end - start;
-	printf("%i nanoseconds\n", time);
+	printf("%lld nanoseconds\n", time);
 	clazz->methods[0]->free(clazz->methods[0]);
 	// https://stackoverflow.com/a/7619315
 	return ((bytes[1][0] & 0xFF) << 24) |

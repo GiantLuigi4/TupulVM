@@ -249,8 +249,22 @@ byte** execInterp(TupulMethod* method, Locals* locals) {
                     for (int i = 0; i < locals->stackTypes.size(); i++) {
                         byte* type = locals->stackTypes[i];
                         byte* bytes = locals->stack[i];
-                        freeType(type);
-                        // free(bytes);
+                        bool containsType = false;
+                        for (byte* ltype : locals->localTypes) {
+                            if ((long long) ltype == (long long) type) {
+                                containsType = true;
+                                break;
+                            }
+                        }
+                        if (!containsType) freeType(type);
+                        containsType = false;
+                        for (byte* lbytes : locals->locals) {
+                            if ((long long) bytes == (long long) lbytes) {
+                                containsType = true;
+                                break;
+                            }
+                        }
+                        if (!containsType) free(bytes);
                     }
                     locals->stack.clear();
                     locals->stackTypes.clear();

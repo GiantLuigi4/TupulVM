@@ -18,4 +18,5 @@ void freeLocals(Locals* locals) {
     for (byte* bytes : locals->locals) free(bytes);
     for (byte* bytes : locals->stackTypes) freeType(bytes);
     for (byte* bytes : locals->localTypes) freeType(bytes);
+    free(locals);
 }

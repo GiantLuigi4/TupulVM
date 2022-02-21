@@ -111,13 +111,13 @@ long long getTimeForPerformance() {
         return start;
 		// TODO: QPC
 	#else
-        LARGE_INTEGER ticks;
-        LARGE_INTEGER FREQ;
-        QueryPerformanceFrequency(&FREQ);
-        QueryPerformanceCounter(&ticks);
-        long long duration = ticks.QuadPart;
-        duration *= 1000000;
-        duration /= FREQ.QuadPart;
-        return duration;
+        LARGE_INTEGER StartingTime, EndingTime, ElapsedMicroseconds;
+        LARGE_INTEGER Frequency;
+        QueryPerformanceFrequency(&Frequency); 
+        QueryPerformanceCounter(&StartingTime);
+        ElapsedMicroseconds.QuadPart = StartingTime.QuadPart;
+        ElapsedMicroseconds.QuadPart *= 1000000;
+        ElapsedMicroseconds.QuadPart /= Frequency.QuadPart;
+        return ElapsedMicroseconds.QuadPart * 10;
     #endif
 }
