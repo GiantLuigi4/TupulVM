@@ -61,10 +61,9 @@ void freeSTDMethod(TupulMethod* method) {
     free(method);
 }
 
-// 0 == sys/time (linux only)
-// 1 == ctime (may not be as precise)
-// 2 == chrono (may not be accurate)
-// 3 == QPC (may not work in vms, windows only currently... I think there's a way to do it in linux but idk)
+// 0 == sys/time (Linux only, Linux default)
+// 1 == ctime (may not be as accurate, universal)
+// 2 == chrono (not very accurate at all, universal)
 #ifdef __unix__
     #define defaultTimeMeasure 0
 #elif defined(WIN32) || defined(_WIN32)

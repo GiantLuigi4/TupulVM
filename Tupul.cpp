@@ -13,8 +13,6 @@ using namespace std;
 #include "ClassLoader.h"
 
 int main(int argc, char** args) {
-	// https://stackoverflow.com/a/12938135
-
 	// println(absolutePath(".vscode/BasicTest.txt"));
 	string str = readFile(".vscode/BasicTest.txt");
 	// string str = readFile("Tupul.cpp");

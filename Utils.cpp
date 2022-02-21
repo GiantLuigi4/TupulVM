@@ -72,11 +72,12 @@ char* readFile(string name) {
 // https://stackoverflow.com/questions/12937963/get-local-time-in-nanoseconds
 // http://www.cplusplus.com/reference/ctime/clock/
 // https://stackoverflow.com/questions/275004/timer-function-to-provide-time-in-nano-seconds-using-c
-// 
-// 0 == sys/time (linux only)
-// 1 == ctime (may not be as precise)
-// 2 == chrono (may not be accurate)
-// 3 == QPC (may not work in vms, windows only currently... I think there's a way to do it in linux but idk)
+// https://stackoverflow.com/a/12938135
+
+// 0 == sys/time (Linux only, Linux default)
+// 1 == ctime (may not be as accurate, universal)
+// 2 == chrono (not very accurate at all, universal)
+// 3 == QPC (Windows only, may not work in vms, should be very accurate in Windows hosts. Windows default)
 #ifdef __unix__
     #define defaultPerfMeasure 0
 #elif defined(WIN32) || defined(_WIN32)
