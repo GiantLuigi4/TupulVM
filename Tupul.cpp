@@ -4,9 +4,13 @@
 
 #include "ClassTree.h"
 
-#include <chrono>
-
 using namespace std;
+
+// [display type] == "x11" or "wayland"
+// yay -Syyu glfw-[display type]
+
+#include "Locals.h"
+#include "ClassLoader.h"
 
 int main(int argc, char** args) {
 	// https://stackoverflow.com/a/12938135
@@ -14,16 +18,20 @@ int main(int argc, char** args) {
 	// println(absolutePath(".vscode/BasicTest.txt"));
 	string str = readFile(".vscode/BasicTest.txt");
 	// string str = readFile("Tupul.cpp");
-	ClassTree tree = createClassTree(str);
+	ClassTree* tree = createClassTree(str);
 	// println(tree.name);
 	// printf("%i\n", tree.methods.size());
 	// println(tree.methods[0].name);
 	// println(tree.methods[0].descr);
+	ClassLoader* ldr = (ClassLoader*) calloc(sizeof(ClassLoader), 1);
 	TupulClass* clazz = finishClass(tree);
-	long long start = std::chrono::high_resolution_clock::now().time_since_epoch().count();
-	byte** bytes = clazz->methods[0]->run(clazz->methods[0]);
-	long long end = std::chrono::high_resolution_clock::now().time_since_epoch().count();
-	printf("%i\n", end - start);
+	clazz->loader = ldr;
+	long long start = getTime();
+	Locals* locals = (Locals*) calloc(sizeof(Locals), 1);
+	byte** bytes = clazz->methods[0]->run(clazz->methods[0], locals);
+	long long end = getTime();
+	long long time = end - start;
+	printf("%i nanoseconds\n", time);
 	clazz->methods[0]->free(clazz->methods[0]);
 	// https://stackoverflow.com/a/7619315
 	return ((bytes[1][0] & 0xFF) << 24) |
