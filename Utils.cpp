@@ -68,3 +68,37 @@ char* readFile(string name) {
 
     return contents;
 }
+
+// https://stackoverflow.com/questions/12937963/get-local-time-in-nanoseconds
+// http://www.cplusplus.com/reference/ctime/clock/
+// https://stackoverflow.com/questions/275004/timer-function-to-provide-time-in-nano-seconds-using-c
+// 
+// 0 == sys/time (linux only, I think?)
+// 1 == ctime (may not be as precise)
+// 2 == chrono (may not be accurate)
+// 3 == QPC (may not work in vms)
+#define timeMeasure 0
+
+#if timeMeasure == 0
+	#include <sys/time.h>
+#elif timeMeasure == 1
+	#include <time.h>
+#else
+	#include <chrono>
+#endif
+
+long long getTime() {
+    #if timeMeasure == 0
+		timespec ts;
+		clock_gettime(CLOCK_REALTIME, &ts);
+		long long start = ts.tv_nsec;
+        return start;
+	#elif timeMeasure == 1
+		clock_t clockTime = clock();
+        return (((float)clockTime)/CLOCKS_PER_SEC) * 1000000000L;
+	#else
+		long long start = std::chrono::high_resolution_clock::now().time_since_epoch().count();
+        return start;
+		// TODO: QPC
+	#endif
+}

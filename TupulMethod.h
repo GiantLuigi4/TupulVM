@@ -6,13 +6,14 @@
 using namespace std;
 
 struct TupulClass;
+struct Locals;
 
 // TODO: figure out some way to automate binding native methods to tupul methods :wheeze:
 struct TupulMethod {
     public: string name = "";
     public: string descr = "";
     public: long context = 0;
-    public: byte** (*run)(TupulMethod*); // TODO: args
+    public: byte** (*run)(TupulMethod*,Locals*); // TODO: args
     public: void (*free)(TupulMethod*);
     public: TupulClass* owner;
 };
@@ -22,5 +23,5 @@ struct TupulMethod {
 // };
 
 void setupInterpretedMethod(TupulMethod* method, vector<Insn> insns, TupulClass* clazz);
-byte** execInterp(TupulMethod* method);
+byte** execInterp(TupulMethod* method, Locals* locals);
 void freeInterpMethod(TupulMethod* method);

@@ -4,19 +4,19 @@
 #include "Opcodes.h"
 #include "TupulClass.h"
 
-TupulClass* finishClass(ClassTree tree) {
+TupulClass* finishClass(ClassTree* tree) {
     TupulClass* clazz = (TupulClass*) calloc(sizeof(TupulClass), 1);
     vector<TupulMethod*> methods;
-    for (MethodTree methodTree : tree.methods) {
+    for (MethodTree methodTree : tree->methods) {
         methods.push_back(finishMethod(methodTree, clazz));
     }
     clazz->methods = methods;
-    clazz->name = tree.name;
+    clazz->name = tree->name;
     return clazz;
 }
 
-ClassTree createClassTree(string str) {
-    ClassTree tree;
+ClassTree* createClassTree(string str) {
+    ClassTree* tree = (ClassTree*) calloc(sizeof(ClassTree), 1);
     bool isName = false;
     string name = "";
     vector<byte> block0;
@@ -83,7 +83,7 @@ ClassTree createClassTree(string str) {
     char* namen = (char*) calloc(sizeof(char), name.length() + 1);
     for (int i = 0; i < name.length(); i++) namen[i] = name[i];
     namen[name.length()] = 0;
-    tree.name = namen;
-    tree.methods = methods;
+    tree->name = namen;
+    tree->methods = methods;
     return tree;
 }

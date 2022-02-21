@@ -12,5 +12,5 @@ struct ClassTree {
     public: vector<MethodTree> methods;
 };
 
-ClassTree createClassTree(string contents);
-TupulClass* finishClass(ClassTree tree);
+ClassTree* createClassTree(string contents);
+TupulClass* finishClass(ClassTree* tree);

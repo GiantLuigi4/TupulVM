@@ -10,5 +10,5 @@ struct Locals {
     public: vector<int> pushPoints;
 };
 
-void popStack(Locals locals);
-void freeLocals(Locals locals);
+void popStack(Locals* locals);
+void freeLocals(Locals* locals);

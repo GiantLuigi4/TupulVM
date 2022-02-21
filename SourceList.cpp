@@ -2,6 +2,10 @@
 
 #include <cstdio>
 
-byte* SourceList::getContents(string name) {
+char* SourceList::getContents(char* name) {
 	return this->sources[name];
+}
+
+bool SourceList::containsName(char* name) {
+	return this->sources.count(name) != 0;
 }
