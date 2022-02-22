@@ -9,7 +9,13 @@
             "request": "launch",
             "name": "Debug",
             "program": "${workspaceFolder}/.vscode/program.exe",
-            "args": [],
+            "args": [
+                "-mode:single_file", 
+                "-class_path:./.vscode/BasicTest.txt",
+                "-class:BasicTest",
+                "-method:main()I",
+                ":", // start program args after this arg
+            ],
             "preLaunchTask": "buildcpp",
             "cwd": "${workspaceFolder}"
         }

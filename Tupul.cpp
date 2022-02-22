@@ -13,24 +13,59 @@ using namespace std;
 #include "ClassLoader.h"
 
 int main(int argc, char** args) {
-	// println(absolutePath(".vscode/BasicTest.txt"));
-	string str = readFile(".vscode/BasicTest.txt");
-	// string str = readFile("Tupul.cpp");
-	ClassTree* tree = createClassTree(str);
-	// println(tree.name);
-	// printf("%i\n", tree.methods.size());
-	// println(tree.methods[0].name);
-	// println(tree.methods[0].descr);
+	// args[0] // executable path
+	
+	// launch mode:
+	// 0 == archive
+	// 1 == single file
+	// 2 == file system
+	int launchMode = 0;
+	// launch args
+	string classPath = "";
+	string clazzToInvoke = "";
+	string methodToInvoke = "";
+	string invoctionDescr = "";
+	for (int i = 1; i < argc; i++) {
+		string argStr = args[i];
+		if (startsWith(argStr, "-mode:")) {
+			string md = argStr.substr(argStr.find_first_of(":") + 1);
+			if (md == "archive") launchMode = 0;
+			else if (md == "single_file") launchMode = 1;
+			else if (md == "sf") launchMode = 1;
+			else if (md == "file_system") launchMode = 2;
+			else if (md == "file_sys") launchMode = 2;
+			else if (md == "fs") launchMode = 2;
+		} else if (startsWith(argStr, "-class_path:") || startsWith(argStr, "-cp:")) {
+			string cp = argStr.substr(argStr.find_first_of(":") + 1);
+			classPath = cp;
+		} else if (startsWith(argStr, "-class:")) {
+			string clazz = argStr.substr(argStr.find_first_of(":") + 1);
+			clazzToInvoke = clazz;
+		} else if (startsWith(argStr, "-method")) {
+			string method = argStr.substr(argStr.find_first_of(":") + 1);
+			invoctionDescr = method.substr(method.find_first_of("("));
+			method = method.substr(0, method.find_first_of("("));
+			methodToInvoke = method;
+		}
+	}
+
+	// string str = readFile(classPath);
+	// ClassTree* tree = createClassTree(str);
 	ClassLoader* ldr = (ClassLoader*) calloc(sizeof(ClassLoader), 1);
-	TupulClass* clazz = finishClass(tree);
-	clazz->loader = ldr;
+	// TODO: archive source
+	if (launchMode == 1) ldr->sources = createSourceSingleFile(classPath);
+	if (launchMode == 2) ldr->sources = createSourceFS(classPath);
+	TupulClass* clazz = getClass(ldr, (char*) clazzToInvoke.c_str());
+	// TupulClass* clazz = finishClass(tree);
+	// clazz->loader = ldr;
 	long long start = getTimeForPerformance();
 	Locals* locals = (Locals*) calloc(sizeof(Locals), 1);
-	byte** bytes = clazz->methods[0]->run(clazz->methods[0], locals);
+	TupulMethod* mainMethod = getMethod(clazz, (char*) methodToInvoke.c_str(), (char*) invoctionDescr.c_str());
+	byte** bytes = mainMethod->run(clazz->methods[0], locals);
 	long long end = getTimeForPerformance();
 	long long time = end - start;
 	printf("%lld nanoseconds\n", time);
-	clazz->methods[0]->free(clazz->methods[0]);
+	freeLoader(ldr);
 	// https://stackoverflow.com/a/7619315
 	return ((bytes[1][0] & 0xFF) << 24) |
 			((bytes[1][1] & 0xFF) << 16) |

@@ -121,3 +121,10 @@ long long getTimeForPerformance() {
         return ElapsedMicroseconds.QuadPart * 10;
     #endif
 }
+
+bool startsWith(string str, string prefix) {
+    for (int i = 0; i < prefix.size(); i++)
+        if (str[i] != prefix[i])
+            return false;
+    return true;
+}

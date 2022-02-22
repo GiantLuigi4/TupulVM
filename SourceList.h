@@ -6,8 +6,13 @@ using namespace std;
 #define byte unsigned char
 
 // TODO: convert to struct
-class SourceList {
-	public: unordered_map<char*, char*> sources;
-	public: char* getContents(char*);
-	public: bool containsName(char*);
+struct SourceList {
+	// public: unordered_map<char*, char*> sources;
+	public: long long data;
+	public: char* (*getContents)(SourceList*,char*);
+	public: bool (*containsName)(SourceList*,char*);
+	public: void (*freeSources)(SourceList*);
 };
+
+SourceList* createSourceSingleFile(string fileName);
+SourceList* createSourceFS(string relDir);

@@ -7,3 +7,4 @@ void print(string str);
 void println(string str);
 char* readFile(string fileName);
 long long getTimeForPerformance();
+bool startsWith(string str, string prefix);

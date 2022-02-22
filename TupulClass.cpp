@@ -14,3 +14,11 @@ TupulMethod* getMethod(TupulClass* clazz, char* name, char* descr) {
 	}
 	return nullptr;
 }
+
+void freeClass(TupulClass* clazz) {
+	for (TupulMethod* method : clazz->methods) {
+		method->free(method);
+		free(method);
+	}
+	free(clazz);
+}

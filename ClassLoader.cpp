@@ -15,11 +15,14 @@ TupulClass* getClass(ClassLoader* loader, char* name) {
 
 TupulClass* loadClass(ClassLoader* loader, char* name) {
     // TODO:
-    // if (loader->sources.containsName(name)) {
-    //     TupulClass* clazz = passTree(loader, createClassTree((string) loader->sources.getContents(name)));
-    //     loader->classes.push_back(clazz);
-    //     return clazz;
-    // }
+    string nameStr = name;
+    nameStr += ".txt";
+    char* nameChr = (char*) nameStr.c_str();
+    if (loader->sources->containsName(loader->sources, nameChr)) {
+        TupulClass* clazz = passTree(loader, createClassTree((string) loader->sources->getContents(loader->sources, nameChr)));
+        loader->classes.push_back(clazz);
+        return clazz;
+    }
     TupulClass* clazz = getSTDClass(name);
     loader->classes.push_back(clazz);
     clazz->loader = loader;
@@ -31,4 +34,10 @@ TupulClass* passTree(ClassLoader* loader, ClassTree* tree) {
     clazz->loader = loader;
     // TODO: this
     return clazz;
+}
+
+void freeLoader(ClassLoader* loader) {
+    for (TupulClass* clazz : loader->classes) freeClass(clazz);
+    // tree modifiers are freed by the above line
+    loader->sources->freeSources(loader->sources);
 }

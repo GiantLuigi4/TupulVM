@@ -13,3 +13,4 @@ struct TupulClass {
 };
 
 TupulMethod* getMethod(TupulClass* clazz, char* name, char* descr);
+void freeClass(TupulClass* clazz);

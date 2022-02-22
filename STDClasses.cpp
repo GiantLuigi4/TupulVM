@@ -66,7 +66,7 @@ byte** println(TupulMethod* method, Locals* locals) {
 }
 
 void freeSTDMethod(TupulMethod* method) {
-    free(method);
+    // nothing to do
 }
 
 // 0 == sys/time (Linux only, Linux default)
@@ -159,7 +159,7 @@ TupulClass* getSTDClass(char* name) {
     string namestr = name;
     if (namestr == "tupul.lang.System") {
         TupulClass* clazz = (TupulClass*) calloc(sizeof(TupulClass), 1);
-        clazz->name = "tupul.lang.System";
+        clazz->name = (char*) "tupul.lang.System";
         
         TupulMethod* method = makeSTDMethod(clazz, "print", "(*)V", print);
         clazz->methods.push_back(method);
