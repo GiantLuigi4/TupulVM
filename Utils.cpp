@@ -118,7 +118,7 @@ long long getTimeForPerformance() {
         ElapsedMicroseconds.QuadPart = StartingTime.QuadPart;
         ElapsedMicroseconds.QuadPart *= 1000000;
         ElapsedMicroseconds.QuadPart /= Frequency.QuadPart;
-        return ElapsedMicroseconds.QuadPart * 10;
+        return ElapsedMicroseconds.QuadPart * 100;
     #endif
 }
 
