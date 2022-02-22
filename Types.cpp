@@ -113,6 +113,7 @@ byte* tupCast(byte* val, byte* typeSrc, byte* typeDst) {
         }
     }
     // TODO: throw exception
+    return {0};
 }
 
 byte* tupSum(byte* num0, byte* type0, byte* num1, byte* type1, byte** type) {
