@@ -17,30 +17,30 @@ byte PUSH = 251;
 byte POP = 250;
 
 bool should_end(byte block_cause, byte current_op, bool second_block) {
-    if (block_cause == METHOD) {
-        return second_block && current_op == END;
-    }
-    return current_op == END;
+	if (block_cause == METHOD) {
+		return second_block && current_op == END;
+	}
+	return current_op == END;
 }
 
 bool should_start_second_block(byte block_cause, byte current_op) {
-    if (block_cause == METHOD) {
-        return current_op == END;
-    }
-    return current_op == DESCRIPTOR;
+	if (block_cause == METHOD) {
+		return current_op == END;
+	}
+	return current_op == DESCRIPTOR;
 }
 
 bool isOpcode(byte op) {
-    return op > 200; // TODO: find the exact value
+	return op > 200; // TODO: find the exact value
 }
 
 bool is_expanded_opcode(byte op) {
-    return
-        op == METHOD  ||
-        op == LOCAL   ||
-        op == SETL    ||
-        op == LOADC   ||
-        op == MATH    ||
-        op == LOADL   ||
-        op == ISTATIC  ;
+	return
+		op == METHOD  ||
+		op == LOCAL   ||
+		op == SETL    ||
+		op == LOADC   ||
+		op == MATH    ||
+		op == LOADL   ||
+		op == ISTATIC  ;
 }

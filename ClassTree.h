@@ -8,8 +8,8 @@ using namespace std;
 #define byte unsigned char
 
 struct ClassTree {
-    public: char* name;
-    public: vector<MethodTree> methods;
+	public: char* name;
+	public: vector<MethodTree> methods;
 };
 
 ClassTree* createClassTree(string contents);

@@ -10,12 +10,12 @@ struct Locals;
 
 // TODO: figure out some way to automate binding native methods to tupul methods :wheeze:
 struct TupulMethod {
-    public: string name = "";
-    public: string descr = "";
-    public: long context = 0;
-    public: byte** (*run)(TupulMethod*,Locals*); // TODO: args
-    public: void (*free)(TupulMethod*);
-    public: TupulClass* owner;
+	public: string name = "";
+	public: string descr = "";
+	public: long context = 0;
+	public: byte** (*run)(TupulMethod*,Locals*); // TODO: args
+	public: void (*free)(TupulMethod*);
+	public: TupulClass* owner;
 };
 
 // class CompiledMethod : TupulMethod {

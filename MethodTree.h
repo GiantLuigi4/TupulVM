@@ -11,9 +11,9 @@ using namespace std;
 struct TupulClass;
 
 struct MethodTree {
-    public: string name;
-    public: string descr;
-    public: vector<Insn> insns;
+	public: string name;
+	public: string descr;
+	public: vector<Insn> insns;
 };
 
 MethodTree methodTreeFor(vector<byte> blockDescr, vector<byte> blockFunc);
