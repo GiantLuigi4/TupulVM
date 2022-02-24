@@ -189,7 +189,25 @@ byte** execInterp(TupulMethod* method, Locals* locals) {
                     // printf("%s\n", insn.arg0);
 
                     byte** typeOut = (byte**) calloc(sizeof(byte*), 1);
-                    byte* result = tupSum(bytes0, type0, bytes1, type1, typeOut);
+					byte* result;
+					// printf("%s\n%s\n", insn.arg0, insn.arg1);
+					switch (insn.arg0[0]) {
+						case '+':
+		                    result = tupSum(bytes0, type0, bytes1, type1, typeOut);
+							break;
+						default:
+							// TODO: print line number
+							printf("ERROR: unimplemented math operator: %s\n", insn.arg0);
+							byte** vm_er = (byte**) calloc(sizeof(byte*), 2);
+							byte* type = (byte*) calloc(sizeof(byte), 1);
+							type[0] = 254;
+							byte* result = (byte*) calloc(sizeof(byte), 2);
+							result[0] = 1; // 1 byte
+							result[1] = 0; // unimplemented operator
+							vm_er[0] = type;
+							vm_er[1] = result;
+							return vm_er;
+					}
                     // long long i0 = (((long long) result[0] & 0xFF) << 56) |
                     //    (((long long) result[1] & 0xFF) << 48) |
                     //    (((long long) result[2] & 0xFF) << 40) |
@@ -269,7 +287,9 @@ byte** execInterp(TupulMethod* method, Locals* locals) {
                     locals->stack.clear();
                     locals->stackTypes.clear();
 
-                    if (result[0][0] == 255) {
+                    if (result[0][0] == 254) {
+						return result; // allow the error to quickly end the program
+					} else if (result[0][0] == 255) {
                         free(result[0]);
                         free(result);
                     } else {

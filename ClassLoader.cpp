@@ -19,7 +19,9 @@ TupulClass* loadClass(ClassLoader* loader, char* name) {
     nameStr += ".txt";
     char* nameChr = (char*) nameStr.c_str();
     if (loader->sources->containsName(loader->sources, nameChr)) {
-        TupulClass* clazz = passTree(loader, createClassTree((string) loader->sources->getContents(loader->sources, nameChr)));
+		char* chars = loader->sources->getContents(loader->sources, nameChr);
+        TupulClass* clazz = passTree(loader, createClassTree((string) chars));
+		loader->sources->freeSource(loader->sources, chars);
         loader->classes.push_back(clazz);
         return clazz;
     }

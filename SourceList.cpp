@@ -28,6 +28,10 @@ void freeSourcesSF(SourceList* list) {
 	free(list);
 }
 
+void freeSourceSF(SourceList* list, char* src) {
+	free(src);
+}
+
 bool containsNameSF(SourceList* list, char* name) {
 	char** selfName = (char**) list->data;
 	return !strcmp(name, selfName[0]);
@@ -61,6 +65,7 @@ SourceList* createSourceSingleFile(string fileName) {
 	list->freeSources = freeSourcesSF;
 	list->getContents = getContentsSF;
 	list->containsName = containsNameSF;
+	list->freeSource = freeSourceSF;
 
 	return list;
 }

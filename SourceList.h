@@ -11,6 +11,7 @@ struct SourceList {
 	public: long long data;
 	public: char* (*getContents)(SourceList*,char*);
 	public: bool (*containsName)(SourceList*,char*);
+	public: void (*freeSource)(SourceList*,char*);
 	public: void (*freeSources)(SourceList*);
 };
 

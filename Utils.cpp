@@ -79,13 +79,14 @@ char* readFile(string name) {
 // 2 == chrono (not very accurate at all, universal)
 // 3 == QPC (Windows only, may not work in vms, should be very accurate in Windows hosts. Windows default)
 #ifdef __unix__
-    #define defaultPerfMeasure 0
+    #define DEFAULT_PERF_MEASURE 0
 #elif defined(WIN32) || defined(_WIN32)
-    #define defaultPerfMeasure 3
+    #define DEFAULT_PERF_MEASURE 3
 #else
-    #define defaultPerfMeasure 1
+    #define DEFAULT_PERF_MEASURE 1
 #endif
-#define perfMeasure defaultPerfMeasure
+// install option
+#define perfMeasure DEFAULT_PERF_MEASURE
 
 #if perfMeasure == 0
 	#include <sys/time.h>
@@ -109,7 +110,6 @@ long long getTimeForPerformance() {
 	#elif perfMeasure == 2
 		long long start = std::chrono::high_resolution_clock::now().time_since_epoch().count();
         return start;
-		// TODO: QPC
 	#else
         LARGE_INTEGER StartingTime, EndingTime, ElapsedMicroseconds;
         LARGE_INTEGER Frequency;

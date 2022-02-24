@@ -7,15 +7,20 @@ byte** print(TupulMethod* method, Locals* locals) {
         byte* local = locals->locals[i];
         switch (type[0]) {
             case 0: {
-                printf("%i", local[0]);
+                printf("%b", local[0]);
                 break;
             }
             case 1: {
-                printf("%s", "NYI");
+                // https://stackoverflow.com/q/5134779
+                short i = (short) ((local[0] & 0xFF) << 8) |
+                                  ((local[1] & 0xFF)     ) ;
+                printf("%h", i);
                 break;
             }
             case 2: {
-                printf("%s", "NYI");
+                short i = (short) ((local[0] & 0xFF) << 8) |
+                                  ((local[1] & 0xFF)     ) ;
+                printf("%c", i);
                 break;
             }
             case 3: {
@@ -24,9 +29,9 @@ byte** print(TupulMethod* method, Locals* locals) {
             }
             case 4: {
                 int i = (int) ((local[0] & 0xFF) << 24) |
-                            ((local[1] & 0xFF) << 16) |
-                            ((local[2] & 0xFF) <<  8) |
-                            ((local[3] & 0xFF) <<  0) ;
+                              ((local[1] & 0xFF) << 16) |
+                              ((local[2] & 0xFF) <<  8) |
+                              ((local[3] & 0xFF) <<  0) ;
                 printf("%i", i);
                 break;
             }
@@ -36,13 +41,13 @@ byte** print(TupulMethod* method, Locals* locals) {
             }
             case 6: {
                 long long i0 = (((long long) local[0] & 0xFF) << 56) |
-                           (((long long) local[1] & 0xFF) << 48) |
-                           (((long long) local[2] & 0xFF) << 40) |
-                           (((long long) local[3] & 0xFF) << 32) |
-                           (((long long) local[4] & 0xFF) << 24) |
-                           (((long long) local[5] & 0xFF) << 16) |
-                           (((long long) local[6] & 0xFF) <<  8) |
-                           (((long long) local[7] & 0xFF) <<  0) ;
+                               (((long long) local[1] & 0xFF) << 48) |
+                               (((long long) local[2] & 0xFF) << 40) |
+                               (((long long) local[3] & 0xFF) << 32) |
+                               (((long long) local[4] & 0xFF) << 24) |
+                               (((long long) local[5] & 0xFF) << 16) |
+                               (((long long) local[6] & 0xFF) <<  8) |
+                               (((long long) local[7] & 0xFF) <<  0) ;
                 printf("%lld", i0);
                 break;
             }
@@ -73,13 +78,14 @@ void freeSTDMethod(TupulMethod* method) {
 // 1 == ctime (may not be as accurate, universal)
 // 2 == chrono (not very accurate at all, universal)
 #ifdef __unix__
-    #define defaultTimeMeasure 0
+    #define DEFAULT_TIME_MEASURE 0
 #elif defined(WIN32) || defined(_WIN32)
-    #define defaultTimeMeasure 2
+    #define DEFAULT_TIME_MEASURE 2
 #else
-    #define defaultTimeMeasure 0
+    #define DEFAULT_TIME_MEASURE 0
 #endif
-#define timeMeasure defaultTimeMeasure
+// install option
+#define timeMeasure DEFAULT_TIME_MEASURE
 
 #if timeMeasure == 0
 	#include <sys/time.h>

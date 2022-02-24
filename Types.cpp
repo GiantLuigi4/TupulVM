@@ -8,6 +8,7 @@ byte* INT       =   (byte[]) {4  };
 byte* FLOAT     =   (byte[]) {5  };
 byte* LONG      =   (byte[]) {6  };
 byte* DOUBLE    =   (byte[]) {7  };
+byte* VM_ERR 	=   (byte[]) {254}; // cannot be caught, as it is an error in the vm itself. likely to lead to memory leaks if it does get caught
 byte* UNDEFINED =   (byte[]) {255};
 
 #include <stdlib.h>

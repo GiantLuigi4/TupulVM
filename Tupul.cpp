@@ -62,6 +62,21 @@ int main(int argc, char** args) {
 	Locals* locals = (Locals*) calloc(sizeof(Locals), 1);
 	TupulMethod* mainMethod = getMethod(clazz, (char*) methodToInvoke.c_str(), (char*) invoctionDescr.c_str());
 	byte** bytes = mainMethod->run(clazz->methods[0], locals);
+
+	if (bytes[0][0] == 254) { // vmerr
+		switch (bytes[1][0]) {
+			case 1:
+				switch (bytes[1][1]) {
+					// math operator unimplemented
+					case 0: return -1;
+					// no error found
+					default: return -21;
+				}
+			// no error table found
+			default: return -20;
+		}
+	}
+
 	long long end = getTimeForPerformance();
 	long long time = end - start;
 	printf("%lld nanoseconds\n", time);
