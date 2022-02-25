@@ -1,10 +1,10 @@
 #pragma once
 #include <string>
 using namespace std;
-#define byte unsigned char
+#include "Definitions.h"
 
 struct Insn {
-	public: byte op;
+	public: TupulByte op;
 	public: char* arg0;
 	public: char* arg1;
 };

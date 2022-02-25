@@ -1,12 +1,12 @@
 #include <vector>
+#include "Definitions.h"
 using namespace std;
-#define byte unsigned char
 
 struct Locals {
-	public: vector<byte*> locals;
-	public: vector<byte*> localTypes;
-	public: vector<byte*> stack;
-	public: vector<byte*> stackTypes;
+	public: vector<TupulByte*> locals;
+	public: vector<TupulByte*> localTypes;
+	public: vector<TupulByte*> stack;
+	public: vector<TupulByte*> stackTypes;
 	public: vector<int> pushPoints;
 };
 

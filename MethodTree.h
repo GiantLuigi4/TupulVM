@@ -16,6 +16,6 @@ struct MethodTree {
 	public: vector<Insn> insns;
 };
 
-MethodTree methodTreeFor(vector<byte> blockDescr, vector<byte> blockFunc);
+MethodTree methodTreeFor(vector<TupulByte> blockDescr, vector<TupulByte> blockFunc);
 TupulMethod* finishMethod(MethodTree tree, TupulClass* clazz);
 // TODO: complete

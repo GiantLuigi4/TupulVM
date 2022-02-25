@@ -32,7 +32,7 @@
 				"-nopie",
 				"-noprofilelib",
 				"-fsanitize-minimal-runtime",
-				"-Ofast",
+				// "-Ofast",
 				"-flto=full"
 				// "-emit-llvm"
 			],

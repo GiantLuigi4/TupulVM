@@ -12,6 +12,8 @@ using namespace std;
 #include "Locals.h"
 #include "ClassLoader.h"
 
+#include "Utils.h"
+
 int main(int argc, char** args) {
 	// args[0] // executable path
 	
@@ -55,9 +57,18 @@ int main(int argc, char** args) {
 	if (launchMode == 2) ldr->sources = createSourceFS(classPath);
 	TupulClass* clazz = getClass(ldr, (char*) clazzToInvoke.c_str());
 	long long start = getTimeForPerformance();
-	Locals* locals = (Locals*) calloc(sizeof(Locals), 1);
 	TupulMethod* mainMethod = getMethod(clazz, (char*) methodToInvoke.c_str(), (char*) invoctionDescr.c_str());
-	byte** bytes = mainMethod->run(clazz->methods[0], locals);
+	for (int i = 0; i < 10; i++) {
+		Locals* locals = (Locals*) trackedCalloc(sizeof(Locals), 1);
+		TupulByte** bytes = mainMethod->run(clazz->methods[0], locals);
+		trackedFree(bytes[1]);
+		trackedFree(bytes);
+		resultCallocs();
+	}
+	Locals* locals = (Locals*) trackedCalloc(sizeof(Locals), 1);
+	TupulByte** bytes = mainMethod->run(clazz->methods[0], locals);
+	// should always print 2 if MEM_TRACK is enabled
+	resultCallocs();
 
 	if (bytes[0][0] == 254) { // vmerr
 		switch (bytes[1][0]) {
@@ -75,11 +86,11 @@ int main(int argc, char** args) {
 
 	long long end = getTimeForPerformance();
 	long long time = end - start;
-	printf("%lld nanoseconds\n", time);
+	printf("%llu nanoseconds\n", time);
 	freeLoader(ldr);
 	// https://stackoverflow.com/a/7619315
 	return ((bytes[1][0] & 0xFF) << 24) |
-			((bytes[1][1] & 0xFF) << 16) |
-			((bytes[1][2] & 0xFF) << 8) |
-			((bytes[1][3] & 0xFF) << 0);
+		   ((bytes[1][1] & 0xFF) << 16) |
+		   ((bytes[1][2] & 0xFF) << 8 ) |
+		   ((bytes[1][3] & 0xFF) << 0 ) ;
 }

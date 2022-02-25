@@ -19,15 +19,15 @@ ClassTree* createClassTree(string str) {
 	ClassTree* tree = (ClassTree*) calloc(sizeof(ClassTree), 1);
 	bool isName = false;
 	string name = "";
-	vector<byte> block0;
-	vector<byte> block1;
+	vector<TupulByte> block0;
+	vector<TupulByte> block1;
 	bool inBlock = false;
 	bool secondBlock = false;
-	byte blockCause = 0;
+	TupulByte blockCause = 0;
 	vector<MethodTree> methods;
 
 	for (char c : str) {
-		byte x = (byte) c;
+		TupulByte x = (TupulByte) c;
 		// printf("%i %c\n", x, x);
 		if (inBlock && should_end(blockCause, x, secondBlock)) {
 			inBlock = false;
@@ -77,7 +77,7 @@ ClassTree* createClassTree(string str) {
 		// }
 		
 		if (isName && x == DESCRIPTOR) isName = false;
-		if (isName) name += (byte) x;
+		if (isName) name += (TupulByte) x;
 		if (x == CLASS) isName = true;
 	}
 	char* namen = (char*) calloc(sizeof(char), name.length() + 1);

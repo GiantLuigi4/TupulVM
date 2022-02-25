@@ -13,7 +13,7 @@ struct TupulMethod {
 	public: string name = "";
 	public: string descr = "";
 	public: long context = 0;
-	public: byte** (*run)(TupulMethod*,Locals*); // TODO: args
+	public: TupulByte** (*run)(TupulMethod*,Locals*); // TODO: args
 	public: void (*free)(TupulMethod*);
 	public: TupulClass* owner;
 };
@@ -23,5 +23,5 @@ struct TupulMethod {
 // };
 
 void setupInterpretedMethod(TupulMethod* method, vector<Insn> insns, TupulClass* clazz);
-byte** execInterp(TupulMethod* method, Locals* locals);
+TupulByte** execInterp(TupulMethod* method, Locals* locals);
 void freeInterpMethod(TupulMethod* method);

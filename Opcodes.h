@@ -1,23 +1,22 @@
 #pragma once
+#include "Definitions.h"
 
-#define byte unsigned char
+extern TupulByte CLASS;
+extern TupulByte METHOD;
+extern TupulByte DESCRIPTOR;
+extern TupulByte END;
+extern TupulByte RETURN;
 
-extern byte CLASS;
-extern byte METHOD;
-extern byte DESCRIPTOR;
-extern byte END;
-extern byte RETURN;
+extern TupulByte LOCAL;
+extern TupulByte LOADC;
+extern TupulByte SETL;
+extern TupulByte LOADL;
+extern TupulByte MATH;
 
-extern byte LOCAL;
-extern byte LOADC;
-extern byte SETL;
-extern byte LOADL;
-extern byte MATH;
+extern TupulByte PUSH;
+extern TupulByte POP;
 
-extern byte PUSH;
-extern byte POP;
-
-bool should_end(byte block_cause, byte current_op, bool second_block);
-bool should_start_second_block(byte block_cause, byte current_op);
-bool isOpcode(byte op);
-bool is_expanded_opcode(byte op);
+bool should_end(TupulByte block_cause, TupulByte current_op, bool second_block);
+bool should_start_second_block(TupulByte block_cause, TupulByte current_op);
+bool isOpcode(TupulByte op);
+bool is_expanded_opcode(TupulByte op);

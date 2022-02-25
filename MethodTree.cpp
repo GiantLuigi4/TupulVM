@@ -15,14 +15,14 @@ TupulMethod* finishMethod(MethodTree tree, TupulClass* clazz) {
 
 // #include <libelf.h>
 
-MethodTree methodTreeFor(vector<byte> blockDescr, vector<byte> blockFunc) {
+MethodTree methodTreeFor(vector<TupulByte> blockDescr, vector<TupulByte> blockFunc) {
 	string name = "";
 	string descr = "";
 	{
 		//@formatter:on
 		bool first = true;
 		for (char c : blockDescr) {
-			byte x = (byte) c;
+			TupulByte x = (TupulByte) c;
 			if (x == DESCRIPTOR) {
 				first = false;
 				continue;
@@ -37,11 +37,11 @@ MethodTree methodTreeFor(vector<byte> blockDescr, vector<byte> blockFunc) {
 	bool inBlock = false;
 	bool second = false;
 	vector<Insn> insns;
-	byte opcode = 0;
+	TupulByte opcode = 0;
 	string arg0 = "";
 	string arg1 = "";
 	for (char c : blockFunc) {
-		byte x = (byte) c;
+		TupulByte x = (TupulByte) c;
 		// if (x > 200) {
 		//     //@formatter:off
 		//          if (x == 253){printf("253 - descriptor\n")    ;}

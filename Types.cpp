@@ -1,35 +1,38 @@
 #include "Types.h"
+#include "Utils.h"
 
-byte* BYTE		=	(byte[]) {0  };
-byte* SHORT		=	(byte[]) {1  };
-byte* CHAR		=	(byte[]) {2  };
-byte* HALF		=	(byte[]) {3  };
-byte* INT		=	(byte[]) {4  };
-byte* FLOAT		=	(byte[]) {5  };
-byte* LONG		=	(byte[]) {6  };
-byte* DOUBLE	=	(byte[]) {7  };
-byte* ERR	 	=	(byte[]) {253}; // can be caught, regular exception thrown by the code of the program being run
-byte* VM_ERR 	=	(byte[]) {254}; // cannot be caught, as it is an error in the vm itself. likely to lead to memory leaks if it does get caught
-byte* UNDEFINED	=	(byte[]) {255};
+#define abyte unsigned char
+
+TupulByte* BYTE			=	(abyte[]) {0  };
+TupulByte* SHORT		=	(TupulByte[]) {1  };
+TupulByte* CHAR			=	(TupulByte[]) {2  };
+TupulByte* HALF			=	(TupulByte[]) {3  };
+TupulByte* INT			=	(TupulByte[]) {4  };
+TupulByte* FLOAT		=	(TupulByte[]) {5  };
+TupulByte* LONG			=	(TupulByte[]) {6  };
+TupulByte* DOUBLE		=	(TupulByte[]) {7  };
+TupulByte* ERR	 		=	(TupulByte[]) {253}; // can be caught, regular exception thrown by the code of the program being run
+TupulByte* VM_ERR 		=	(TupulByte[]) {254}; // cannot be caught, as it is an error in the vm itself. likely to lead to memory leaks if it does get caught
+TupulByte* UNDEFINED	=	(TupulByte[]) {255};
 
 #include <stdlib.h>
 
-void freeType(byte* type) {
-	if (type[0] == 8) free(type);
+void freeType(TupulByte* type) {
+	if (type[0] == 8) trackedFree(type);
 }
 
-byte* copyType(byte* type) {
+TupulByte* copyType(TupulByte* type) {
 	if (type[0] == 8) {
 		short len = ((type[1] & 0xFF) << 8) |
 					((type[2] & 0xFF) << 0);
-		byte* out = (byte*) calloc(sizeof(byte), len);
+		TupulByte* out = (TupulByte*) trackedCalloc(sizeof(TupulByte), len);
 		for (int i = 0; i < len; i++) out[i] = type[i];
 		return out;
 	}
 	return type;
 }
 
-short getTypeLength(byte* type) {
+short getTypeLength(TupulByte* type) {
 	if (type[0] != 8) {
 		// well that's neat
 		switch (type[0]) {
@@ -47,11 +50,17 @@ short getTypeLength(byte* type) {
 }
 
 #include <cstdio>
-byte* tupCast(byte* val, byte* typeSrc, byte* typeDst) {
+TupulByte* tupCast(TupulByte* val, TupulByte* typeSrc, TupulByte* typeDst) {
+	if (typeSrc == typeDst) {
+		int len = getTypeLength(typeSrc);
+		TupulByte* bytesCopy = (TupulByte*) trackedCalloc(sizeof(TupulByte), len);
+		for (int i = 0; i < len; i++) bytesCopy[i] = val[i];
+		return bytesCopy;
+	}
 	// printf("%i\n", typeSrc[0]);
 	// printf("%i\n", typeDst[0]);
 	if (typeDst == BYTE) {
-		byte* out = (byte*) calloc(sizeof(byte), 1);
+		TupulByte* out = (TupulByte*) trackedCalloc(sizeof(TupulByte), 1);
 		out[0] = val[0];
 		return out;
 	}
@@ -67,7 +76,7 @@ byte* tupCast(byte* val, byte* typeSrc, byte* typeDst) {
 						(((long long) val[7] & 0xFF) <<  0) ;
 			int i = (int) i0;
 			
-			byte* bytes = (byte*) calloc(sizeof(byte), 4);
+			TupulByte* bytes = (TupulByte*) trackedCalloc(sizeof(TupulByte), 4);
 			bytes[0] = (i >> 24) & 0xFF;
 			bytes[1] = (i >> 16) & 0xFF;
 			bytes[2] = (i >> 8) & 0xFF;
@@ -77,12 +86,12 @@ byte* tupCast(byte* val, byte* typeSrc, byte* typeDst) {
 	}
 	if (typeSrc == INT) {
 		if (typeDst == BYTE) {
-			byte* out = (byte*) calloc(sizeof(byte), 1);
+			TupulByte* out = (TupulByte*) trackedCalloc(sizeof(TupulByte), 1);
 			// out[0] = val[0] - val[2];
 			// TODO: get off C++ casts
 			return out;
 		} else if (typeDst == LONG) {
-			byte* out = (byte*) calloc(sizeof(byte), 8);
+			TupulByte* out = (TupulByte*) trackedCalloc(sizeof(TupulByte), 8);
 			long long i = (long long) ((val[0] & 0xFF) << 24) |
 									((val[1] & 0xFF) << 16) |
 									((val[2] & 0xFF) <<  8) |
@@ -118,13 +127,13 @@ byte* tupCast(byte* val, byte* typeSrc, byte* typeDst) {
 	return {0};
 }
 
-byte* tupSum(byte* num0, byte* type0, byte* num1, byte* type1, byte** type) {
+TupulByte* tupSum(TupulByte* num0, TupulByte* type0, TupulByte* num1, TupulByte* type1, TupulByte** type) {
 	type[0] = preferredType(type0, type1);
 	// TODO: non-primitive sum
 	if (type0 != type[0]) num0 = tupCast(num0, type0, type[0]);
 	if (type1 != type[0]) num1 = tupCast(num1, type1, type[0]);
 	if (type[0] == BYTE) {
-		byte* bytes = (byte*) calloc(sizeof(byte), 1);
+		TupulByte* bytes = (TupulByte*) trackedCalloc(sizeof(TupulByte), 1);
 		bytes[0] = num0[0] + num1[0];
 		return bytes;
 	}
@@ -137,7 +146,7 @@ byte* tupSum(byte* num0, byte* type0, byte* num1, byte* type1, byte** type) {
 		
 		int i = i0 + i1;
 
-		byte* bytes = (byte*) calloc(sizeof(byte), 4);
+		TupulByte* bytes = (TupulByte*) trackedCalloc(sizeof(TupulByte), 4);
 		bytes[0] = (i >> 24) & 0xFF;
 		bytes[1] = (i >> 16) & 0xFF;
 		bytes[2] = (i >> 8) & 0xFF;
@@ -157,7 +166,7 @@ byte* tupSum(byte* num0, byte* type0, byte* num1, byte* type1, byte** type) {
 		
 		int i = i0 + i1;
 
-		byte* bytes = (byte*) calloc(sizeof(byte), 4);
+		TupulByte* bytes = (TupulByte*) trackedCalloc(sizeof(TupulByte), 4);
 		bytes[0] = (i >> 24) & 0xFF;
 		bytes[1] = (i >> 16) & 0xFF;
 		bytes[2] = (i >> 8) & 0xFF;
@@ -185,7 +194,7 @@ byte* tupSum(byte* num0, byte* type0, byte* num1, byte* type1, byte** type) {
 		
 		long long i = i0 + i1;
 
-		byte* bytes = (byte*) calloc(sizeof(byte), 8);
+		TupulByte* bytes = (TupulByte*) trackedCalloc(sizeof(TupulByte), 8);
 		bytes[0] = (i >> (long) 56) & 0xFF;
 		bytes[1] = (i >> (long) 48) & 0xFF;
 		bytes[2] = (i >> (long) 40) & 0xFF;
@@ -199,7 +208,7 @@ byte* tupSum(byte* num0, byte* type0, byte* num1, byte* type1, byte** type) {
 	return {0};
 }
 
-byte* preferredType(byte* type0, byte* type1) {
+TupulByte* preferredType(TupulByte* type0, TupulByte* type1) {
 	if (type0 == DOUBLE || type1 == DOUBLE) return DOUBLE;
 	if (type0 == FLOAT || type1 == FLOAT) return FLOAT; // warning from long to float
 	if (type0 == LONG || type1 == LONG) return LONG;
