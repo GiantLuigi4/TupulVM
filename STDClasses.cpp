@@ -7,14 +7,14 @@ byte** print(TupulMethod* method, Locals* locals) {
 		byte* local = locals->locals[i];
 		switch (type[0]) {
 			case 0: {
-				printf("%b", local[0]);
+				printf("%i", local[0]);
 				break;
 			}
 			case 1: {
 				// https://stackoverflow.com/q/5134779
 				short i = (short) ((local[0] & 0xFF) << 8) |
 								  ((local[1] & 0xFF)     ) ;
-				printf("%h", i);
+				printf("%i", i);
 				break;
 			}
 			case 2: {

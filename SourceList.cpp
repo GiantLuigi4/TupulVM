@@ -60,7 +60,7 @@ SourceList* createSourceSingleFile(string fileName) {
 	data[1] = path;
 
 	list->data = (long) data;
-	char** selfName = (char**) list->data;
+	// char** selfName = (char**) list->data;
 	// printf("%s\n", selfName[0]);;
 	list->freeSources = freeSourcesSF;
 	list->getContents = getContentsSF;

@@ -3,11 +3,11 @@
     "tasks": [
         {
             "type": "shell",
-            "label": "buildcpp",
+            "label": "buildgcc",
             "command": "g++",
             "args": [
                 "-g", "${workspaceFolder}/*.cpp",
-                "-o", "${workspaceFolder}/.vscode/program.exe",
+                "-o", "${workspaceFolder}/.run/program.exe",
                 "-O3", // I might as well
                 "-fpermissive", // windows moment
             ],
@@ -19,6 +19,31 @@
                 "kind": "build",
                 "isDefault": true
             }
-        }
+        },
+		{
+			"type": "shell",
+			"label": "buildclang",
+			"command": "clang++",
+			"args": [
+				"-Wall",
+				"-std=c++20",
+				"*.cpp",
+				"-o", "${workspaceFolder}/.run/program.exe",
+				"-nopie",
+				"-noprofilelib",
+				"-fsanitize-minimal-runtime",
+				"-Ofast",
+				"-flto=full"
+				// "-emit-llvm"
+			],
+			"options": {
+				"cwd": "${workspaceFolder}"
+			},
+			"problemMatcher": ["$gcc"],
+			"group": {
+				"kind": "build",
+				"isDefault": true
+			}
+		}
     ]
 }

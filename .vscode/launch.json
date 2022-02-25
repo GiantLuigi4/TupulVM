@@ -7,17 +7,48 @@
         {
             "type": "lldb",
             "request": "launch",
-            "name": "Debug",
-            "program": "${workspaceFolder}/.vscode/program.exe",
+            "name": "lld debug",
+            "program": "${workspaceFolder}/.run/program.exe",
             "args": [
                 "-mode:single_file", 
-                "-class_path:./.vscode/BasicTest.txt",
+                "-class_path:./BasicTest.txt",
                 "-class:BasicTest",
                 "-method:main()I",
                 ":", // start program args after this arg
             ],
-            "preLaunchTask": "buildcpp",
-            "cwd": "${workspaceFolder}"
-        }
+            "cwd": "${workspaceFolder}/.run/",
+            "preLaunchTask": "buildclang",
+        },
+		{
+			"name": "(gdb) Launch",
+			"type": "cppdbg",
+			"request": "launch",
+			"program": "${workspaceFolder}/.run/program.exe",
+            "args": [
+                "-mode:single_file", 
+                "-class_path:./BasicTest.txt",
+                "-class:BasicTest",
+                "-method:main()I",
+                ":", // start program args after this arg
+            ],
+			"stopAtEntry": false,
+            "cwd": "${workspaceFolder}/.run/",
+			"environment": [],
+			"externalConsole": false,
+			"MIMode": "gdb",
+			"setupCommands": [
+				{
+					"description": "Enable pretty-printing for gdb",
+					"text": "-enable-pretty-printing",
+					"ignoreFailures": true
+				},
+				{
+					"description":  "Set Disassembly Flavor to Intel",
+					"text": "-gdb-set disassembly-flavor intel",
+					"ignoreFailures": true
+				}
+			],
+            "preLaunchTask": "buildgcc",
+		}
     ]
 }
