@@ -13,6 +13,8 @@ TupulMethod* finishMethod(MethodTree tree, TupulClass* clazz) {
 	return method;
 }
 
+// #include <libelf.h>
+
 MethodTree methodTreeFor(vector<byte> blockDescr, vector<byte> blockFunc) {
 	string name = "";
 	string descr = "";
