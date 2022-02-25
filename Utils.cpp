@@ -24,12 +24,13 @@ void println(string str) {
 	#include <locale>
 	#include <codecvt>
 #endif
+#include "FileSystems.h"
 char* readFile(string name) {
 	FILE* fp;
 	// println(name);
-	fp = fopen(name.c_str(), "r");
+	fp = fopen(absolutePath(name).c_str(), "r");
 	if (fp == null) {
-		printf("File not found\n");
+		printf("File not found: %s\n", absolutePath(name).c_str());
 		// TODO: throw vm error
 		return null;
 	}

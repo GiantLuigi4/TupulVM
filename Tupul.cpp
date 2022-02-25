@@ -49,15 +49,11 @@ int main(int argc, char** args) {
 		}
 	}
 
-	// string str = readFile(classPath);
-	// ClassTree* tree = createClassTree(str);
 	ClassLoader* ldr = (ClassLoader*) calloc(sizeof(ClassLoader), 1);
 	// TODO: archive source
 	if (launchMode == 1) ldr->sources = createSourceSingleFile(classPath);
 	if (launchMode == 2) ldr->sources = createSourceFS(classPath);
 	TupulClass* clazz = getClass(ldr, (char*) clazzToInvoke.c_str());
-	// TupulClass* clazz = finishClass(tree);
-	// clazz->loader = ldr;
 	long long start = getTimeForPerformance();
 	Locals* locals = (Locals*) calloc(sizeof(Locals), 1);
 	TupulMethod* mainMethod = getMethod(clazz, (char*) methodToInvoke.c_str(), (char*) invoctionDescr.c_str());

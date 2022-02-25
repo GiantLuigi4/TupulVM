@@ -70,7 +70,43 @@ SourceList* createSourceSingleFile(string fileName) {
 	return list;
 }
 
+char* getContentsFS(SourceList* list, char* name) {
+	char** selfName = (char**) list->data;
+	string str = selfName[1];
+	str += name;
+	char* out = readFile(str);
+	return out;
+}
+
+#include <filesystem>
+bool containsNameFS(SourceList* list, char* name) {
+	char** selfName = (char**) list->data;
+	string str = selfName[1];
+	str += name;
+	return filesystem::exists(str);
+}
+
 SourceList* createSourceFS(string relDir) {
-	// TODO:
-	return nullptr;
+	SourceList* list = (SourceList*) calloc(sizeof(SourceList), 1);
+	relDir = steralizePath(relDir);
+	if (relDir[relDir.length() - 1] != '/') relDir += "/";
+	char** data = (char**) calloc(sizeof(char*), 2);
+	
+	char* path = (char*) calloc(sizeof(char), relDir.size());
+	for (int i = 0; i < relDir.length(); i++) path[i] = relDir[i];
+
+	relDir = relDir.substr(relDir.find_last_of("/") + 1);
+	char* name = (char*) calloc(sizeof(char), relDir.size());
+	for (int i = 0; i < relDir.length(); i++) name[i] = relDir[i];
+	
+	data[0] = name;
+	data[1] = path;
+
+	list->data = (long) data;
+	list->freeSources = freeSourcesSF;
+	list->getContents = getContentsFS;
+	list->containsName = containsNameFS;
+	list->freeSource = freeSourceSF;
+
+	return list;
 }
