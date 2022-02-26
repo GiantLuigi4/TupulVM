@@ -13,9 +13,12 @@
 				"-flto",
                 // "-O3",
 
+				"-static-libstdc++",
+
 				"-floop-nest-optimize",
 				"-floop-strip-mine",
-				"-flto-compression-level=19",
+				// "-flto-compression-level=19",
+				"-flto-compression-level=9",
 				"-funroll-loops",
 				"-Wpointer-arith",
             ],

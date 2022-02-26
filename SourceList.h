@@ -1,9 +1,9 @@
 #pragma once
 #include <unordered_map>
 #include <string>
+#include "Definitions.h"
 
 using namespace std;
-#define byte unsigned char
 
 // TODO: convert to struct
 struct SourceList {

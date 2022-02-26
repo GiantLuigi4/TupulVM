@@ -78,12 +78,25 @@ char* getContentsFS(SourceList* list, char* name) {
 	return out;
 }
 
-#include <filesystem>
+#if defined(_WIN32) || defined(WIN32)
+	#include <windows.h>
+	#include <winbase.h>
+#else
+	#include <filesystem>
+#endif
+#include "FileSystems.h"
 bool containsNameFS(SourceList* list, char* name) {
 	char** selfName = (char**) list->data;
 	string str = selfName[1];
 	str += name;
-	return filesystem::exists(str);
+	#if defined(_WIN32) || defined(WIN32)
+		// WINDOWS, WHY
+		DWORD attribs = GetFileAttributes(absolutePath((string) str).c_str());
+		if (attribs == INVALID_FILE_ATTRIBUTES) return false;
+		return true;
+	#else
+		return filesystem::exists(str);
+	#endif
 }
 
 SourceList* createSourceFS(string relDir) {

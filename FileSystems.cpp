@@ -1,6 +1,8 @@
 #include <string>
 using namespace std;
 
+#include "Utils.h"
+
 // https://stackoverflow.com/questions/8666378/detect-windows-or-linux-in-c-c/33088568
 // cross platform support
 #if defined(_WIN32) || defined(WIN32)
@@ -161,13 +163,23 @@ string steralizePath(string input) {
 			// because of this fact, this has to be done
 
 			// https://stackoverflow.com/questions/2896600/how-to-replace-all-occurrences-of-a-character-in-string
-			return input.replace(input.begin(), input.end(), "\\", "/"); // thanks windows
+			for (;;) {
+				size_t indx = input.find("\\");
+				if (indx == -1) break;
+				input[indx] = '/';
+			}
+			return input;
 		#else
 			return input;
 		#endif
 	#elif forgiving_fsep == 1
 		// always
-		return input.replace(input.begin(), input.end(), "\\", "/"); // thanks windows
+		for (;;) {
+			size_t indx = input.find("\\");
+			if (indx == -1) break;
+			input[indx] = '/';
+		}
+		return input;
 		// TODO: vm arg mode
 	#endif
 }
