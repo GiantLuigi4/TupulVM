@@ -1,4 +1,5 @@
 #include "TupulClass.h"
+#include "Utils.h"
 
 TupulMethod* getMethod(TupulClass* clazz, char* name, char* descr) {
 	string nameStr = name;
@@ -16,9 +17,15 @@ TupulMethod* getMethod(TupulClass* clazz, char* name, char* descr) {
 }
 
 void freeClass(TupulClass* clazz) {
-	for (TupulMethod* method : clazz->methods) {
-		method->free(method);
-		free(method);
-	}
-	free(clazz);
+	#ifdef MEM_TRACK_COUNT
+		int allocs = tallyAllocs();
+		printf("Freeing class: \"%s\", starting with %i pointers\n", clazz->name, allocs);
+	#endif
+	for (TupulMethod* method : clazz->methods) method->free(method);
+	trackedFree(clazz->name);
+	trackedFree(clazz);
+	#ifdef MEM_TRACK_COUNT
+		int finalAllocs = tallyAllocs();
+		printf("Freeing class, allocated %i pointers\n", finalAllocs - allocs);
+	#endif
 }

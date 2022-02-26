@@ -23,7 +23,7 @@ void popStack(Locals* locals) {
 
 void freeLocals(Locals* locals) {
 	for (TupulByte* bytes : locals->stack) trackedFree(bytes);
-	for (TupulByte* bytes : locals->locals) trackedFree(bytes);
+	for (TupulByte* bytes : locals->locals) trackedFree(bytes); // sometimes this'll free a null pointer, but that's ok
 	for (TupulByte* bytes : locals->stackTypes) freeType(bytes);
 	for (TupulByte* bytes : locals->localTypes) freeType(bytes);
 	locals->stack.clear();

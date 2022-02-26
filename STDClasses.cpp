@@ -1,6 +1,8 @@
 #include "STDClasses.h"
 #include "Locals.h"
 
+#include "Utils.h"
+
 TupulByte** print(TupulMethod* method, Locals* locals) {
 	for (int i = 0; i < locals->localTypes.size(); i++) {
 		TupulByte* type = locals->localTypes[i];
@@ -57,8 +59,8 @@ TupulByte** print(TupulMethod* method, Locals* locals) {
 			}
 		}
 	}
-	TupulByte** out = (TupulByte**) calloc(sizeof(TupulByte*), 1);
-	out[0] = (TupulByte*) calloc(sizeof(TupulByte), 1);
+	TupulByte** out = (TupulByte**) trackedAlloc(sizeof(TupulByte*), 1);
+	out[0] = (TupulByte*) trackedAlloc(sizeof(TupulByte), 1);
 	out[0][0] = (TupulByte) 255;
 	freeLocals(locals);
 	return out;
@@ -105,7 +107,7 @@ TupulByte** getTimeT(TupulMethod* method, Locals* locals) {
 	freeLocals(locals);
 	long long time = getTime();
 
-	TupulByte* out = (TupulByte*) calloc(sizeof(TupulByte), 8);
+	TupulByte* out = (TupulByte*) trackedAlloc(sizeof(TupulByte), 8);
 	out[0] = (time >> (long long) 56) & 0xFF;
 	out[1] = (time >> (long long) 48) & 0xFF;
 	out[2] = (time >> (long long) 40) & 0xFF;
@@ -115,7 +117,7 @@ TupulByte** getTimeT(TupulMethod* method, Locals* locals) {
 	out[6] = (time >> 8) & 0xFF;
 	out[7] = time & 0xFF;
 	
-	TupulByte** realOut = (TupulByte**) calloc(sizeof(TupulByte*), 2);
+	TupulByte** realOut = (TupulByte**) trackedAlloc(sizeof(TupulByte*), 2);
 	realOut[1] = out;
 	realOut[0] = LONG;
 	return realOut;
@@ -124,7 +126,7 @@ TupulByte** getTimeM(TupulMethod* method, Locals* locals) {
 	freeLocals(locals);
 	long long time = getTime();
 
-	TupulByte* out = (TupulByte*) calloc(sizeof(TupulByte), 8);
+	TupulByte* out = (TupulByte*) trackedAlloc(sizeof(TupulByte), 8);
 	out[0] = (time >> (long long) 56) & 0xFF;
 	out[1] = (time >> (long long) 48) & 0xFF;
 	out[2] = (time >> (long long) 40) & 0xFF;
@@ -134,7 +136,7 @@ TupulByte** getTimeM(TupulMethod* method, Locals* locals) {
 	out[6] = (time >> 8) & 0xFF;
 	out[7] = time & 0xFF;
 	
-	TupulByte** realOut = (TupulByte**) calloc(sizeof(TupulByte*), 2);
+	TupulByte** realOut = (TupulByte**) trackedAlloc(sizeof(TupulByte*), 2);
 	realOut[1] = out;
 	realOut[0] = LONG;
 	return realOut;
@@ -142,7 +144,7 @@ TupulByte** getTimeM(TupulMethod* method, Locals* locals) {
 
 TupulMethod* makeSTDMethod(TupulClass* clazz, string name, string descr, TupulByte** (*exec)(TupulMethod*,Locals*)) {
 	// this just be how native methods be, yk
-	TupulMethod* method = (TupulMethod*) calloc(sizeof(TupulMethod), 1);
+	TupulMethod* method = (TupulMethod*) trackedAlloc(sizeof(TupulMethod), 1);
 	method->name = name;
 	method->descr = descr;
 	method->run = exec;
@@ -153,7 +155,7 @@ TupulMethod* makeSTDMethod(TupulClass* clazz, string name, string descr, TupulBy
 TupulClass* getSTDClass(char* name) {
 	string namestr = name;
 	if (namestr == "tupul.lang.System") {
-		TupulClass* clazz = (TupulClass*) calloc(sizeof(TupulClass), 1);
+		TupulClass* clazz = (TupulClass*) trackedAlloc(sizeof(TupulClass), 1);
 		clazz->name = (char*) "tupul.lang.System";
 		
 		TupulMethod* method = makeSTDMethod(clazz, "print", "(*)V", print);

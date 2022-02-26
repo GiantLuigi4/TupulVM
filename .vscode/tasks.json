@@ -8,8 +8,16 @@
             "args": [
                 "-g", "${workspaceFolder}/*.cpp",
                 "-o", "${workspaceFolder}/.run/program.exe",
-                // "-O3", // I might as well
                 "-fpermissive", // windows moment
+				
+				"-flto",
+                // "-O3",
+
+				"-floop-nest-optimize",
+				"-floop-strip-mine",
+				"-flto-compression-level=19",
+				"-funroll-loops",
+				"-Wpointer-arith",
             ],
             "options": {
                 "cwd": "${workspaceFolder}"
@@ -29,12 +37,14 @@
 				"-std=c++20",
 				"*.cpp",
 				"-o", "${workspaceFolder}/.run/program.exe",
+
+				"-flto=full",
+				// "-O3",
+
 				"-nopie",
 				"-noprofilelib",
 				"-fsanitize-minimal-runtime",
-				// "-Ofast",
-				"-flto=full"
-				// "-emit-llvm"
+				"-funroll-loops",
 			],
 			"options": {
 				"cwd": "${workspaceFolder}"

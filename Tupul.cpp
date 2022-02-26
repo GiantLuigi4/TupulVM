@@ -51,24 +51,22 @@ int main(int argc, char** args) {
 		}
 	}
 
-	ClassLoader* ldr = (ClassLoader*) calloc(sizeof(ClassLoader), 1);
+	ClassLoader* ldr = (ClassLoader*) trackedAlloc(sizeof(ClassLoader), 1);
 	// TODO: archive source
 	if (launchMode == 1) ldr->sources = createSourceSingleFile(classPath);
 	if (launchMode == 2) ldr->sources = createSourceFS(classPath);
 	TupulClass* clazz = getClass(ldr, (char*) clazzToInvoke.c_str());
 	long long start = getTimeForPerformance();
 	TupulMethod* mainMethod = getMethod(clazz, (char*) methodToInvoke.c_str(), (char*) invoctionDescr.c_str());
-	for (int i = 0; i < 10; i++) {
-		Locals* locals = (Locals*) trackedCalloc(sizeof(Locals), 1);
+	for (int i = 0; i < 100000000; i++) {
+		Locals* locals = (Locals*) trackedAlloc(sizeof(Locals), 1);
 		TupulByte** bytes = mainMethod->run(clazz->methods[0], locals);
 		trackedFree(bytes[1]);
 		trackedFree(bytes);
-		resultCallocs();
+		// resultAllocs();
 	}
-	Locals* locals = (Locals*) trackedCalloc(sizeof(Locals), 1);
+	Locals* locals = (Locals*) trackedAlloc(sizeof(Locals), 1);
 	TupulByte** bytes = mainMethod->run(clazz->methods[0], locals);
-	// should always print 2 if MEM_TRACK is enabled
-	resultCallocs();
 
 	if (bytes[0][0] == 254) { // vmerr
 		switch (bytes[1][0]) {
@@ -87,10 +85,16 @@ int main(int argc, char** args) {
 	long long end = getTimeForPerformance();
 	long long time = end - start;
 	printf("%llu nanoseconds\n", time);
+	trackedFree(bytes[1]);
+	trackedFree(bytes);
+
 	freeLoader(ldr);
+	// should always print 0 if MEM_TRACK is enabled
+	resultAllocs();
 	// https://stackoverflow.com/a/7619315
-	return ((bytes[1][0] & 0xFF) << 24) |
-		   ((bytes[1][1] & 0xFF) << 16) |
-		   ((bytes[1][2] & 0xFF) << 8 ) |
-		   ((bytes[1][3] & 0xFF) << 0 ) ;
+	// return ((bytes[1][0] & 0xFF) << 24) |
+	// 	   ((bytes[1][1] & 0xFF) << 16) |
+	// 	   ((bytes[1][2] & 0xFF) << 8 ) |
+	// 	   ((bytes[1][3] & 0xFF) << 0 ) ;
+	return 0;
 }

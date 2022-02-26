@@ -1,8 +1,10 @@
 /* constants */
 #define TupulByte unsigned char
+#define null nullptr
 
 /* debug options */
 #define MEM_TRACK
+#define MEM_TRACK_COUNT
 
 /* defaults */
 

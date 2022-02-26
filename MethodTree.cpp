@@ -2,8 +2,10 @@
 #include "Insn.h"
 #include "Opcodes.h"
 
+#include "Utils.h"
+
 TupulMethod* finishMethod(MethodTree tree, TupulClass* clazz) {
-	TupulMethod* method = (TupulMethod*) calloc(sizeof(TupulMethod), 1);
+	TupulMethod* method = (TupulMethod*) trackedAlloc(sizeof(TupulMethod), 1);
 	// method.name = tree.name;
 	setupInterpretedMethod(method, tree.insns, clazz);
 	// method.descr = tree.descr;
@@ -16,6 +18,10 @@ TupulMethod* finishMethod(MethodTree tree, TupulClass* clazz) {
 // #include <libelf.h>
 
 MethodTree methodTreeFor(vector<TupulByte> blockDescr, vector<TupulByte> blockFunc) {
+	#ifdef MEM_TRACK_COUNT
+		int allocs = tallyAllocs();
+		printf("Creating method tree, starting with %i pointers\n", allocs);
+	#endif
 	string name = "";
 	string descr = "";
 	{
@@ -62,10 +68,11 @@ MethodTree methodTreeFor(vector<TupulByte> blockDescr, vector<TupulByte> blockFu
 				if (opcode != 0) {
 					if (inBlock) {
 						if (second) {
-							char* firstArg = (char*) calloc(sizeof(char), arg0.length() + 1);
+							char* firstArg = (char*) trackedAlloc(sizeof(char), arg0.length() + 1);
 							for (int i = 0; i < arg0.length(); i++) firstArg[i] = arg0[i];
 							firstArg[arg0.length()] = 0;
-							char* secondArg = (char*) calloc(sizeof(char), arg1.length() + 1);
+							// do I need the extra char?
+							char* secondArg = (char*) trackedAlloc(sizeof(char), arg1.length() + 1);
 							for (int i = 0; i < arg1.length(); i++) secondArg[i] = arg1[i];
 							secondArg[arg1.length()] = 0;
 							Insn insn = Insn { op: opcode, arg0: firstArg, arg1: secondArg };
@@ -76,7 +83,7 @@ MethodTree methodTreeFor(vector<TupulByte> blockDescr, vector<TupulByte> blockFu
 							second = false;
 							inBlock = false;
 						} else {
-							char* firstArg = (char*) calloc(sizeof(char), arg0.length() + 1);
+							char* firstArg = (char*) trackedAlloc(sizeof(char), arg0.length() + 1);
 							for (int i = 0; i < arg0.length(); i++) firstArg[i] = arg0[i];
 							firstArg[arg0.length()] = 0;
 							Insn insn = Insn { op: opcode, arg0: firstArg, arg1: nullptr };
@@ -120,17 +127,17 @@ MethodTree methodTreeFor(vector<TupulByte> blockDescr, vector<TupulByte> blockFu
 	if (opcode != 0) {
 		if (inBlock) {
 			if (second) {
-				char* firstArg = (char*) calloc(sizeof(char), arg0.length() + 1);
+				char* firstArg = (char*) trackedAlloc(sizeof(char), arg0.length() + 1);
 				for (int i = 0; i < arg0.length(); i++) firstArg[i] = arg0[i];
 				firstArg[arg0.length()] = 0;
-				char* secondArg = (char*) calloc(sizeof(char), arg1.length() + 1);
+				char* secondArg = (char*) trackedAlloc(sizeof(char), arg1.length() + 1);
 				for (int i = 0; i < arg1.length(); i++) secondArg[i] = arg1[i];
 				secondArg[arg1.length()] = 0;
 				Insn insn = Insn { op: opcode, arg0: firstArg, arg1: secondArg };
 				insns.push_back(insn);
 				// println!("{:?}", insn.borrow());
 			} else {
-				char* firstArg = (char*) calloc(sizeof(char), arg0.length() + 1);
+				char* firstArg = (char*) trackedAlloc(sizeof(char), arg0.length() + 1);
 				for (int i = 0; i < arg0.length(); i++) firstArg[i] = arg0[i];
 				firstArg[arg0.length()] = 0;
 				Insn insn = Insn { op: opcode, arg0: firstArg, arg1: nullptr };
@@ -151,5 +158,9 @@ MethodTree methodTreeFor(vector<TupulByte> blockDescr, vector<TupulByte> blockFu
 	tree.name = name;
 	tree.descr = descr;
 	tree.insns = insns;
+	#ifdef MEM_TRACK_COUNT
+		int finalAllocs = tallyAllocs();
+		printf("Creating method tree: \"%s\" allocated %i pointers\n", tree.name.c_str(), finalAllocs - allocs);
+	#endif
 	return tree;
 }

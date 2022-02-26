@@ -4,19 +4,43 @@
 #include "Opcodes.h"
 #include "TupulClass.h"
 
+#include "Utils.h"
+
 TupulClass* finishClass(ClassTree* tree) {
-	TupulClass* clazz = (TupulClass*) calloc(sizeof(TupulClass), 1);
+	#ifdef MEM_TRACK_COUNT
+		int allocsC = tallyAllocs();
+		printf("Finalizing class: \"%s\", starting with %i pointers\n", tree->name, allocsC);
+	#endif
+	TupulClass* clazz = (TupulClass*) trackedAlloc(sizeof(TupulClass), 1);
 	vector<TupulMethod*> methods;
 	for (MethodTree methodTree : tree->methods) {
+		#ifdef MEM_TRACK_COUNT
+			int allocs = tallyAllocs();
+			printf("Finalizing method tree: \"%s\", starting with %i pointers\n", methodTree.name.c_str(), allocs);
+		#endif
 		methods.push_back(finishMethod(methodTree, clazz));
+		#ifdef MEM_TRACK_COUNT
+			int finalAllocs = tallyAllocs();
+			printf("Finalizing method tree: \"%s\", allocated %i pointers\n", methodTree.name.c_str(), finalAllocs - allocs);
+		#endif
 	}
 	clazz->methods = methods;
 	clazz->name = tree->name;
+	// trackedFree(tree->name);
+	trackedFree(tree);
+	#ifdef MEM_TRACK_COUNT
+		int finalAllocsC = tallyAllocs();
+		printf("Finalizing class: \"%s\", allocated %i pointers\n", clazz->name, finalAllocsC - allocsC);
+	#endif
 	return clazz;
 }
 
 ClassTree* createClassTree(string str) {
-	ClassTree* tree = (ClassTree*) calloc(sizeof(ClassTree), 1);
+	#ifdef MEM_TRACK_COUNT
+		int allocs = tallyAllocs();
+		printf("Creating class tree, starting with %i pointers\n", allocs);
+	#endif
+	ClassTree* tree = (ClassTree*) trackedAlloc(sizeof(ClassTree), 1);
 	bool isName = false;
 	string name = "";
 	vector<TupulByte> block0;
@@ -80,10 +104,14 @@ ClassTree* createClassTree(string str) {
 		if (isName) name += (TupulByte) x;
 		if (x == CLASS) isName = true;
 	}
-	char* namen = (char*) calloc(sizeof(char), name.length() + 1);
+	char* namen = (char*) trackedAlloc(sizeof(char), name.length() + 1);
 	for (int i = 0; i < name.length(); i++) namen[i] = name[i];
 	namen[name.length()] = 0;
 	tree->name = namen;
 	tree->methods = methods;
+	#ifdef MEM_TRACK_COUNT
+		int finalAllocs = tallyAllocs();
+		printf("Creating class tree: \"%s\", allocated %i pointers\n", tree->name, finalAllocs - allocs);
+	#endif
 	return tree;
 }

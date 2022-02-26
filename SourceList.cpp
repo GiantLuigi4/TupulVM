@@ -22,14 +22,14 @@
 #include "Utils.h"
 void freeSourcesSF(SourceList* list) {
 	char** selfName = (char**) list->data;
-	free(selfName[0]);
-	free(selfName[1]);
-	free(selfName);
-	free(list);
+	trackedFree(selfName[0]);
+	trackedFree(selfName[1]);
+	trackedFree(selfName);
+	trackedFree(list);
 }
 
 void freeSourceSF(SourceList* list, char* src) {
-	free(src);
+	trackedFree(src);
 }
 
 bool containsNameSF(SourceList* list, char* name) {
@@ -45,15 +45,15 @@ char* getContentsSF(SourceList* list, char* name) {
 
 #include "FileSystems.h"
 SourceList* createSourceSingleFile(string fileName) {
-	SourceList* list = (SourceList*) calloc(sizeof(SourceList), 1);
+	SourceList* list = (SourceList*) trackedAlloc(sizeof(SourceList), 1);
 	fileName = steralizePath(fileName);
-	char** data = (char**) calloc(sizeof(char*), 2);
+	char** data = (char**) trackedAlloc(sizeof(char*), 2);
 	
-	char* path = (char*) calloc(sizeof(char), fileName.size());
+	char* path = (char*) trackedAlloc(sizeof(char), fileName.size());
 	for (int i = 0; i < fileName.length(); i++) path[i] = fileName[i];
 
 	fileName = fileName.substr(fileName.find_last_of("/") + 1);
-	char* name = (char*) calloc(sizeof(char), fileName.size());
+	char* name = (char*) trackedAlloc(sizeof(char), fileName.size());
 	for (int i = 0; i < fileName.length(); i++) name[i] = fileName[i];
 	
 	data[0] = name;
@@ -87,16 +87,16 @@ bool containsNameFS(SourceList* list, char* name) {
 }
 
 SourceList* createSourceFS(string relDir) {
-	SourceList* list = (SourceList*) calloc(sizeof(SourceList), 1);
+	SourceList* list = (SourceList*) trackedAlloc(sizeof(SourceList), 1);
 	relDir = steralizePath(relDir);
 	if (relDir[relDir.length() - 1] != '/') relDir += "/";
-	char** data = (char**) calloc(sizeof(char*), 2);
+	char** data = (char**) trackedAlloc(sizeof(char*), 2);
 	
-	char* path = (char*) calloc(sizeof(char), relDir.size());
+	char* path = (char*) trackedAlloc(sizeof(char), relDir.size());
 	for (int i = 0; i < relDir.length(); i++) path[i] = relDir[i];
 
 	relDir = relDir.substr(relDir.find_last_of("/") + 1);
-	char* name = (char*) calloc(sizeof(char), relDir.size());
+	char* name = (char*) trackedAlloc(sizeof(char), relDir.size());
 	for (int i = 0; i < relDir.length(); i++) name[i] = relDir[i];
 	
 	data[0] = name;

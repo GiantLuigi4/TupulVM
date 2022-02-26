@@ -2,6 +2,8 @@
 #include "string.h"
 #include "STDClasses.h"
 
+#include "Utils.h"
+
 TupulClass* getClass(ClassLoader* loader, char* name) {
 	string cname = name;
 	for (TupulClass* clazz : loader->classes) {
@@ -42,4 +44,5 @@ void freeLoader(ClassLoader* loader) {
 	for (TupulClass* clazz : loader->classes) freeClass(clazz);
 	// tree modifiers are freed by the above line
 	loader->sources->freeSources(loader->sources);
+	trackedFree(loader);
 }

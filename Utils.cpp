@@ -1,5 +1,7 @@
 #define _CRT_SECURE_NO_WARNINGS
 
+#include "Utils.h"
+
 #include <cstdio>
 #include <string>
 
@@ -38,7 +40,7 @@ char* readFile(string name) {
 	// https://stackoverflow.com/a/238607
 	int len = ftell(fp);
 	rewind(fp);
-	char* contents = (char*) calloc(sizeof(char), len);
+	char* contents = (char*) trackedAlloc(sizeof(char), len);
 	fread(contents, sizeof(char), len, fp);
 
 	fclose(fp); // fclose frees fp
@@ -54,16 +56,16 @@ char* readFile(string name) {
 			int sizeNeeded = MultiByteToWideChar(CP_UTF8, 0, &str[0], (int)str.size(), NULL, 0);
 			std::wstring wstrTo(sizeNeeded, 0);
 			MultiByteToWideChar(CP_UTF8, 0, &str[0], (int)str.size(), &wstrTo[0], sizeNeeded);
-			char* out = (char*) calloc(sizeof(char), sizeNeeded);
+			char* out = (char*) trackedAlloc(sizeof(char), sizeNeeded);
 			for (int i = 0; i < sizeNeeded; i++) out[i] = wstrTo[i];
 		#else
 			wstring_convert<codecvt_utf8_utf16<char16_t>, char16_t> converter;
 			u16string utf16 = converter.from_bytes(contents);
-			char* out = (char*) calloc(sizeof(char), utf16.length());
+			char* out = (char*) trackedAlloc(sizeof(char), utf16.length());
 			for (int i = 0; i < utf16.length(); i++) out[i] = utf16[i];
 		#endif
 		
-		free(contents);
+		trackedFree(contents);
 		return out;
 	}
 
@@ -72,25 +74,43 @@ char* readFile(string name) {
 
 #include "Definitions.h"
 
+#include <cstring>
+
+void* qalloc(size_t typeSize, size_t amount) {
+	// return calloc(typeSize, amount);
+	int sz = typeSize * amount;
+	void* result = (void*) malloc(sz + 1);
+	memset(result, 0, sz + 1);
+	// TODO: see if there's any way to do this
+	// result[sz] = 0; // null terminator
+	return (void*) result;
+}
+
 // this is awesome, I love this
 #ifdef MEM_TRACK
 	int leftovers = 0;
 
-	void* trackedCalloc(size_t typeSize, size_t amount) {
-		leftovers++;
-		return calloc(typeSize, amount);
+	int tallyAllocs() {
+		return leftovers;
+	}
+	
+	void* trackedAlloc(size_t typeSize, size_t amount) {
+		leftovers += 1;
+		// printf("allocated a new pointer, %i unmatched allocs\n", leftovers);
+		return qalloc(typeSize, amount);
 	}
 
 	void trackedFree(void* obj) {
-		leftovers--;
+		if (obj != nullptr) leftovers -= 1;
+		// printf("freed a pointer, %i unmatched allocs\n", leftovers);
 		free(obj);
 	}
 
-	void resultCallocs() {
-		printf("%i unmatched callocs\n", leftovers);
+	void resultAllocs() {
+		printf("%i unmatched allocs\n", leftovers);
 	}
 #else
-	void resultCallocs() {}
+	void resultAllocs() {}
 #endif
 
 #if perfMeasure == 0

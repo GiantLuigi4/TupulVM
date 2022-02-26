@@ -1,6 +1,8 @@
 #include "Insn.h"
 
+#include "Utils.h"
+
 void Insns::freeInsn(Insn insn) {
-	free(insn.arg0);
-	free(insn.arg1);
+	if (insn.arg0 != null) trackedFree(insn.arg0);
+	if (insn.arg1 != null) trackedFree(insn.arg1);
 }

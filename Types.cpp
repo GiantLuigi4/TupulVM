@@ -25,7 +25,7 @@ TupulByte* copyType(TupulByte* type) {
 	if (type[0] == 8) {
 		short len = ((type[1] & 0xFF) << 8) |
 					((type[2] & 0xFF) << 0);
-		TupulByte* out = (TupulByte*) trackedCalloc(sizeof(TupulByte), len);
+		TupulByte* out = (TupulByte*) trackedAlloc(sizeof(TupulByte), len);
 		for (int i = 0; i < len; i++) out[i] = type[i];
 		return out;
 	}
@@ -53,14 +53,14 @@ short getTypeLength(TupulByte* type) {
 TupulByte* tupCast(TupulByte* val, TupulByte* typeSrc, TupulByte* typeDst) {
 	if (typeSrc == typeDst) {
 		int len = getTypeLength(typeSrc);
-		TupulByte* bytesCopy = (TupulByte*) trackedCalloc(sizeof(TupulByte), len);
+		TupulByte* bytesCopy = (TupulByte*) trackedAlloc(sizeof(TupulByte), len);
 		for (int i = 0; i < len; i++) bytesCopy[i] = val[i];
 		return bytesCopy;
 	}
 	// printf("%i\n", typeSrc[0]);
 	// printf("%i\n", typeDst[0]);
 	if (typeDst == BYTE) {
-		TupulByte* out = (TupulByte*) trackedCalloc(sizeof(TupulByte), 1);
+		TupulByte* out = (TupulByte*) trackedAlloc(sizeof(TupulByte), 1);
 		out[0] = val[0];
 		return out;
 	}
@@ -76,7 +76,7 @@ TupulByte* tupCast(TupulByte* val, TupulByte* typeSrc, TupulByte* typeDst) {
 						(((long long) val[7] & 0xFF) <<  0) ;
 			int i = (int) i0;
 			
-			TupulByte* bytes = (TupulByte*) trackedCalloc(sizeof(TupulByte), 4);
+			TupulByte* bytes = (TupulByte*) trackedAlloc(sizeof(TupulByte), 4);
 			bytes[0] = (i >> 24) & 0xFF;
 			bytes[1] = (i >> 16) & 0xFF;
 			bytes[2] = (i >> 8) & 0xFF;
@@ -86,16 +86,16 @@ TupulByte* tupCast(TupulByte* val, TupulByte* typeSrc, TupulByte* typeDst) {
 	}
 	if (typeSrc == INT) {
 		if (typeDst == BYTE) {
-			TupulByte* out = (TupulByte*) trackedCalloc(sizeof(TupulByte), 1);
+			TupulByte* out = (TupulByte*) trackedAlloc(sizeof(TupulByte), 1);
 			// out[0] = val[0] - val[2];
 			// TODO: get off C++ casts
 			return out;
 		} else if (typeDst == LONG) {
-			TupulByte* out = (TupulByte*) trackedCalloc(sizeof(TupulByte), 8);
+			TupulByte* out = (TupulByte*) trackedAlloc(sizeof(TupulByte), 8);
 			long long i = (long long) ((val[0] & 0xFF) << 24) |
-									((val[1] & 0xFF) << 16) |
-									((val[2] & 0xFF) <<  8) |
-									((val[3] & 0xFF) <<  0) ;
+									  ((val[1] & 0xFF) << 16) |
+									  ((val[2] & 0xFF) <<  8) |
+									  ((val[3] & 0xFF) <<  0) ;
 
 			out[0] = (i >> (long long) 56) & 0xFF;
 			out[1] = (i >> (long long) 48) & 0xFF;
@@ -133,7 +133,7 @@ TupulByte* tupSum(TupulByte* num0, TupulByte* type0, TupulByte* num1, TupulByte*
 	if (type0 != type[0]) num0 = tupCast(num0, type0, type[0]);
 	if (type1 != type[0]) num1 = tupCast(num1, type1, type[0]);
 	if (type[0] == BYTE) {
-		TupulByte* bytes = (TupulByte*) trackedCalloc(sizeof(TupulByte), 1);
+		TupulByte* bytes = (TupulByte*) trackedAlloc(sizeof(TupulByte), 1);
 		bytes[0] = num0[0] + num1[0];
 		return bytes;
 	}
@@ -146,7 +146,7 @@ TupulByte* tupSum(TupulByte* num0, TupulByte* type0, TupulByte* num1, TupulByte*
 		
 		int i = i0 + i1;
 
-		TupulByte* bytes = (TupulByte*) trackedCalloc(sizeof(TupulByte), 4);
+		TupulByte* bytes = (TupulByte*) trackedAlloc(sizeof(TupulByte), 4);
 		bytes[0] = (i >> 24) & 0xFF;
 		bytes[1] = (i >> 16) & 0xFF;
 		bytes[2] = (i >> 8) & 0xFF;
@@ -166,7 +166,7 @@ TupulByte* tupSum(TupulByte* num0, TupulByte* type0, TupulByte* num1, TupulByte*
 		
 		int i = i0 + i1;
 
-		TupulByte* bytes = (TupulByte*) trackedCalloc(sizeof(TupulByte), 4);
+		TupulByte* bytes = (TupulByte*) trackedAlloc(sizeof(TupulByte), 4);
 		bytes[0] = (i >> 24) & 0xFF;
 		bytes[1] = (i >> 16) & 0xFF;
 		bytes[2] = (i >> 8) & 0xFF;
@@ -194,7 +194,7 @@ TupulByte* tupSum(TupulByte* num0, TupulByte* type0, TupulByte* num1, TupulByte*
 		
 		long long i = i0 + i1;
 
-		TupulByte* bytes = (TupulByte*) trackedCalloc(sizeof(TupulByte), 8);
+		TupulByte* bytes = (TupulByte*) trackedAlloc(sizeof(TupulByte), 8);
 		bytes[0] = (i >> (long) 56) & 0xFF;
 		bytes[1] = (i >> (long) 48) & 0xFF;
 		bytes[2] = (i >> (long) 40) & 0xFF;
