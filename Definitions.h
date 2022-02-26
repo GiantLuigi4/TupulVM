@@ -40,5 +40,5 @@
 #define perfMeasure DEFAULT_PERF_MEASURE
 
 /* undefine defaults */
-#undef DEFAULT_TIME_MEASURE
-#undef DEFAULT_PERF_MEASURE
+// #undef DEFAULT_TIME_MEASURE
+// #undef DEFAULT_PERF_MEASURE

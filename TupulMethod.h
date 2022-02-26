@@ -12,7 +12,7 @@ struct Locals;
 struct TupulMethod {
 	public: string name = "";
 	public: string descr = "";
-	public: long context = 0;
+	public: long long context = 0;
 	public: TupulByte** (*run)(TupulMethod*,Locals*); // TODO: args
 	public: void (*free)(TupulMethod*);
 	public: TupulClass* owner;

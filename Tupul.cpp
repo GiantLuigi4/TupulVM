@@ -56,17 +56,19 @@ int main(int argc, char** args) {
 	if (launchMode == 1) ldr->sources = createSourceSingleFile(classPath);
 	if (launchMode == 2) ldr->sources = createSourceFS(classPath);
 	TupulClass* clazz = getClass(ldr, (char*) clazzToInvoke.c_str());
-	long long start = getTimeForPerformance();
 	TupulMethod* mainMethod = getMethod(clazz, (char*) methodToInvoke.c_str(), (char*) invoctionDescr.c_str());
-	for (int i = 0; i < 100000000; i++) {
-		Locals* locals = (Locals*) trackedAlloc(sizeof(Locals), 1);
-		TupulByte** bytes = mainMethod->run(clazz->methods[0], locals);
-		trackedFree(bytes[1]);
-		trackedFree(bytes);
-		// resultAllocs();
-	}
+	// for (int i = 0; i < 100000000; i++) {
+	// 	Locals* locals = (Locals*) trackedAlloc(sizeof(Locals), 1);
+	// 	TupulByte** bytes = mainMethod->run(clazz->methods[0], locals);
+	// 	trackedFree(bytes[1]);
+	// 	trackedFree(bytes);
+	// 	// resultAllocs();
+	// }
 	Locals* locals = (Locals*) trackedAlloc(sizeof(Locals), 1);
+	long long start = getTimeForPerformance();
 	TupulByte** bytes = mainMethod->run(clazz->methods[0], locals);
+	long long end = getTimeForPerformance();
+	long long time = end - start;
 
 	if (bytes[0][0] == 254) { // vmerr
 		switch (bytes[1][0]) {
@@ -81,9 +83,6 @@ int main(int argc, char** args) {
 			default: return -20;
 		}
 	}
-
-	long long end = getTimeForPerformance();
-	long long time = end - start;
 	printf("%llu nanoseconds\n", time);
 	trackedFree(bytes[1]);
 	trackedFree(bytes);
