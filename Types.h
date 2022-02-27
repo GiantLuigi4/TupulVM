@@ -16,4 +16,5 @@ TupulByte* copyType(TupulByte* src); // copies the type if the type is a non-pri
 short getTypeLength(TupulByte* type);
 TupulByte* tupCast(TupulByte* val, TupulByte* typeSrc, TupulByte* typeDst);
 TupulByte* tupSum(TupulByte* num0, TupulByte* type0, TupulByte* num1, TupulByte* type1, TupulByte** type);
+TupulByte* tupDiff(TupulByte* num0, TupulByte* type0, TupulByte* num1, TupulByte* type1, TupulByte** type);
 TupulByte* preferredType(TupulByte* type0, TupulByte* type1);

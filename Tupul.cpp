@@ -14,6 +14,8 @@ using namespace std;
 
 #include "Utils.h"
 
+#include "Types.h"
+
 int main(int argc, char** args) {
 	// args[0] // executable path
 	
@@ -27,6 +29,7 @@ int main(int argc, char** args) {
 	string clazzToInvoke = "";
 	string methodToInvoke = "";
 	string invoctionDescr = "";
+	bool debugOut = true;
 	for (int i = 1; i < argc; i++) {
 		string argStr = args[i];
 		if (startsWith(argStr, "-mode:")) {
@@ -48,7 +51,7 @@ int main(int argc, char** args) {
 			invoctionDescr = method.substr(method.find_first_of("("));
 			method = method.substr(0, method.find_first_of("("));
 			methodToInvoke = method;
-		}
+		} else if (startsWith(argStr, "--debugOutput") || startsWith(argStr, "--debugOut") || startsWith(argStr, "--dout")) debugOut = true;
 	}
 
 	ClassLoader* ldr = (ClassLoader*) trackedAlloc(sizeof(ClassLoader), 1);
@@ -84,6 +87,18 @@ int main(int argc, char** args) {
 		}
 	}
 	printf("%llu nanoseconds\n", time);
+	int i0 = *((int*) bytes[1]);
+
+	if (debugOut) {
+		if (bytes[0] == LONG) printf("-- Result: %lli --\n", *((long long*) bytes[1]));
+		if (bytes[0] == INT) printf("-- Result: %i --\n", *((int*) bytes[1]));
+		if (bytes[0] == SHORT) printf("-- Result: %s --\n", *((int*) bytes[1]));
+		if (bytes[0] == BYTE) printf("-- Result: %i --\n", (int) *((TupulByte*) bytes[1]));
+		if (bytes[0] == FLOAT) printf("-- Result: %f --\n", *((float*) bytes[1]));
+		if (bytes[0] == DOUBLE) printf("-- Result: %d --\n", *((double*) bytes[1]));
+		if (bytes[0] == CHAR) printf("-- Result: %c --\n", *((char*) bytes[1]));
+	}
+
 	trackedFree(bytes[1]);
 	trackedFree(bytes);
 
@@ -91,9 +106,6 @@ int main(int argc, char** args) {
 	// should always print 0 if MEM_TRACK is enabled
 	resultAllocs();
 	// https://stackoverflow.com/a/7619315
-	// return ((bytes[1][0] & 0xFF) << 24) |
-	// 	   ((bytes[1][1] & 0xFF) << 16) |
-	// 	   ((bytes[1][2] & 0xFF) << 8 ) |
-	// 	   ((bytes[1][3] & 0xFF) << 0 ) ;
-	return 0;
+	return i0;
+	// return 0;
 }

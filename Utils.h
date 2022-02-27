@@ -15,8 +15,13 @@ int tallyAllocs();
 	void* trackedAlloc(size_t typeSize, size_t amount);
 	void trackedFree(void* obj);
 #else
-	#define trackedCalloc calloc
-	#define trackedFree free
+	#if cachedPointers == 1 || useQalloc == 1
+		void* trackedAlloc(size_t typeSize, size_t amount);
+		void trackedFree(void* obj);
+	#else
+		#define trackedAlloc calloc
+		#define trackedFree free
+	#endif
 #endif
 
 void resultAllocs();

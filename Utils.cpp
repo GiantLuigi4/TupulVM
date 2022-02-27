@@ -75,21 +75,73 @@ char* readFile(string name) {
 #include "Definitions.h"
 
 #include <cstring>
+#include <map>
+#include <vector>
+
+#ifdef MEM_TRACK
+	int leftovers = 0;
+#endif
+
+#if cachedPointers == 1
+	map<int, vector<void*>> freeBytes;
+
+	int getLen(void* obj) {
+		int i = 0;
+		TupulByte* chr = (TupulByte*) trackedAlloc(sizeof(TupulByte), 1);
+		for (;;) {
+			i++;
+			memcpy(chr, obj + i, 1);
+			if (chr[0] == '\0') {
+				#ifdef MEM_TRACK
+					leftovers -= 1;
+				#endif
+	
+				int len = 1;
+				if (freeBytes.count(len) == 0) {
+					vector<void*> blocks;
+					freeBytes.insert(pair<int, vector<void*>>(len, blocks));
+				}
+				freeBytes.at(len).push_back(obj);
+
+				return i;
+			}
+		}
+		
+		#ifdef MEM_TRACK
+			leftovers -= 1;
+		#endif
+		int len = 1;
+		if (freeBytes.count(len) == 0) {
+			vector<void*> blocks;
+			freeBytes.insert(pair<int, vector<void*>>(len, blocks));
+		}
+		freeBytes.at(len).push_back(obj);
+		
+		return -1;
+	}
+#endif
 
 void* qalloc(size_t typeSize, size_t amount) {
 	// return calloc(typeSize, amount);
 	int sz = typeSize * amount;
+	#if cachedPointers == 1
+		if (freeBytes.count(sz) != 0) {
+			vector<void*> vec = freeBytes.at(sz);
+			void* vd = vec[vec.size() - 1];
+			vec.pop_back();
+			memset(vd, 0, sz + 1);
+			return vd;
+		}
+	#endif
 	void* result = (void*) malloc(sz + 1);
+	// TODO: move qalloc to be it's own thing, this creates some finicky behavior with structs
+	// memset(result + sz, 0, 1);
 	memset(result, 0, sz + 1);
-	// TODO: see if there's any way to do this
-	// result[sz] = 0; // null terminator
 	return (void*) result;
 }
 
 // this is awesome, I love this
 #ifdef MEM_TRACK
-	int leftovers = 0;
-
 	int tallyAllocs() {
 		return leftovers;
 	}
@@ -101,15 +153,54 @@ void* qalloc(size_t typeSize, size_t amount) {
 	}
 
 	void trackedFree(void* obj) {
-		if (obj != nullptr) leftovers -= 1;
+		if (obj == nullptr) return;
+		leftovers -= 1;
 		// printf("freed a pointer, %i unmatched allocs\n", leftovers);
-		free(obj);
+
+		#if cachedPointers == 1
+			int len = getLen(obj);
+			if (freeBytes.count(len) == 0) {
+				vector<void*> blocks;
+				freeBytes.insert(pair<int, vector<void*>>(len, blocks));
+			}
+			freeBytes.at(len).push_back(obj);
+		#else
+			free(obj);
+		#endif
 	}
 
 	void resultAllocs() {
 		printf("%i unmatched allocs\n", leftovers);
 	}
 #else
+	#if cachedPointers == 1 || useQalloc == 1
+		void* trackedAlloc(size_t typeSize, size_t amount) {
+			#ifdef MEM_TRACK
+				leftovers += 1;
+			#endif
+			// printf("allocated a new pointer, %i unmatched allocs\n", leftovers);
+			return qalloc(typeSize, amount);
+		}
+
+		void trackedFree(void* obj) {
+			if (obj == nullptr) return;
+			#ifdef MEM_TRACK
+				leftovers -= 1;
+			#endif
+
+			#if cachedPointers == 1
+				int len = getLen(obj);
+				if (freeBytes.count(len) == 0) {
+					vector<void*> blocks;
+					freeBytes.insert(pair<int, vector<void*>>(len, blocks));
+				}
+				freeBytes.at(len).push_back(obj);
+			#else
+				free(obj);
+			#endif
+		}
+	#endif
+
 	void resultAllocs() {}
 #endif
 

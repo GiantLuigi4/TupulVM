@@ -83,33 +83,63 @@ TupulByte** execInterp(TupulMethod* method, Locals* locals) {
 						case 'I': {
 								// https://stackoverflow.com/a/4442669
 								int i = stoi(insn.arg0);
+								TupulByte *byteArray = (TupulByte*) &i;
 								TupulByte* bytes = (TupulByte*) trackedAlloc(sizeof(TupulByte), 4);
-								// https://stackoverflow.com/a/43515755
-								bytes[0] = (i >> 24) & 0xFF;
-								bytes[1] = (i >> 16) & 0xFF;
-								bytes[2] = (i >> 8) & 0xFF;
-								bytes[3] = i & 0xFF;
+								bytes[0] = byteArray[0];
+								bytes[1] = byteArray[1];
+								bytes[2] = byteArray[2];
+								bytes[3] = byteArray[3];
+
 								locals->stack.push_back(bytes);
 								locals->stackTypes.push_back(INT);
-							}
-							break;
+							}	break;
 						case 'L': {
-								// https://stackoverflow.com/a/4442669
 								long long i = stol(insn.arg0);
+								TupulByte *byteArray = (TupulByte*) &i;
 								TupulByte* bytes = (TupulByte*) trackedAlloc(sizeof(TupulByte), 8);
-								// https://stackoverflow.com/a/43515755
-								bytes[0] = (i >> (long) 56) & 0xFF;
-								bytes[1] = (i >> (long) 48) & 0xFF;
-								bytes[2] = (i >> (long) 40) & 0xFF;
-								bytes[3] = (i >> (long) 32) & 0xFF;
-								bytes[4] = (i >> 24) & 0xFF;
-								bytes[5] = (i >> 16) & 0xFF;
-								bytes[6] = (i >> 8) & 0xFF;
-								bytes[7] = i & 0xFF;
+								bytes[0] = byteArray[0];
+								bytes[1] = byteArray[1];
+								bytes[2] = byteArray[2];
+								bytes[3] = byteArray[3];
+								bytes[5] = byteArray[5];
+								bytes[6] = byteArray[6];
+								bytes[7] = byteArray[7];
 								locals->stack.push_back(bytes);
 								locals->stackTypes.push_back(LONG);
-							}
-							break;
+							}	break;
+						case 'B': {
+								TupulByte i = (TupulByte) stoi(insn.arg0);
+								TupulByte* bytes = (TupulByte*) trackedAlloc(sizeof(TupulByte), 1);
+								bytes[0] = (TupulByte) i;
+								locals->stack.push_back(bytes);
+								locals->stackTypes.push_back(BYTE);
+							}	break;
+						// https://stackoverflow.com/a/8059806
+						case 'F': {
+								float i = stof(insn.arg0);
+								TupulByte *byteArray = (TupulByte*) &i;
+								TupulByte* bytes = (TupulByte*) trackedAlloc(sizeof(TupulByte), 4);
+								bytes[0] = byteArray[0];
+								bytes[1] = byteArray[1];
+								bytes[2] = byteArray[2];
+								bytes[3] = byteArray[3];
+								locals->stack.push_back(bytes);
+								locals->stackTypes.push_back(FLOAT);
+							}	break;
+						case 'D': {
+								double i = stod(insn.arg0);
+								TupulByte *byteArray = (TupulByte*) &i;
+								TupulByte* bytes = (TupulByte*) trackedAlloc(sizeof(TupulByte), 8);
+								bytes[0] = byteArray[0];
+								bytes[1] = byteArray[1];
+								bytes[2] = byteArray[2];
+								bytes[3] = byteArray[3];
+								bytes[5] = byteArray[5];
+								bytes[6] = byteArray[6];
+								bytes[7] = byteArray[7];
+								locals->stack.push_back(bytes);
+								locals->stackTypes.push_back(DOUBLE);
+							}	break;
 					}
 				}
 				break;
@@ -147,11 +177,13 @@ TupulByte** execInterp(TupulMethod* method, Locals* locals) {
 			case 243: { // RETURN
 					TupulByte** output = (TupulByte**) trackedAlloc(sizeof(TupulByte*), 2);
 					TupulByte* bytes = locals->stack[locals->stack.size() - 1];
+
 					TupulByte* type = locals->stackTypes[locals->stackTypes.size() - 1];
 
 					TupulByte* typeCopy = copyType(type);
 					int len = getTypeLength(typeCopy);
 					TupulByte* bytesCopy = (TupulByte*) trackedAlloc(sizeof(TupulByte), len);
+
 					for (int i = 0; i < len; i++) bytesCopy[i] = bytes[i];
 
 					output[0] = typeCopy;
@@ -180,6 +212,9 @@ TupulByte** execInterp(TupulMethod* method, Locals* locals) {
 					switch (insn.arg0[0]) {
 						case '+':
 							result = tupSum(bytes0, type0, bytes1, type1, typeOut);
+							break;
+						case '-':
+							result = tupDiff(bytes0, type0, bytes1, type1, typeOut);
 							break;
 						default:
 							// TODO: print line number
@@ -259,7 +294,7 @@ TupulByte** execInterp(TupulMethod* method, Locals* locals) {
 void freeInterpMethod(TupulMethod* method) {
 	#ifdef MEM_TRACK_COUNT
 		int allocs = tallyAllocs();
-		printf("Freeing method: \"%s\", allocated %i pointers\n", method->name.c_str(), allocs);
+		printf("Freeing method: \"%s\", starting with %i pointers\n", method->name.c_str(), allocs);
 	#endif
 	Insn** insns = (Insn**) method->context;
 	long len = (long) insns[1];
