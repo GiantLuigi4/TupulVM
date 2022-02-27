@@ -49,8 +49,6 @@
 				// "-disable-slp-vectorizer",
 				// "-disable-pgo-memopt-opt",
 
-				"-fsyntax-only",
-
 				// pretty sure these are doing nothing, but I'm keeping them anyway
 				// "-nopie",
 				// "-noprofilelib",

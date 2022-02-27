@@ -68,10 +68,11 @@ int main(int argc, char** args) {
 	// 	// resultAllocs();
 	// }
 	Locals* locals = (Locals*) trackedAlloc(sizeof(Locals), 1);
-	long long start = getTimeForPerformance();
+	unsigned long long start = getTimeForPerformance();
 	TupulByte** bytes = mainMethod->run(clazz->methods[0], locals);
-	long long end = getTimeForPerformance();
-	long long time = end - start;
+	unsigned long long end = getTimeForPerformance();
+	unsigned long long time = end - start;
+	printf("%llu nanoseconds\n", time);
 
 	if (bytes[0][0] == 254) { // vmerr
 		switch (bytes[1][0]) {
@@ -86,7 +87,6 @@ int main(int argc, char** args) {
 			default: return -20;
 		}
 	}
-	printf("%llu nanoseconds\n", time);
 	int i0 = *((int*) bytes[1]);
 
 	if (debugOut) {

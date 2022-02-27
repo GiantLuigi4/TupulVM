@@ -20,6 +20,7 @@ void setupInterpretedMethod(TupulMethod* method, vector<Insn> insns, TupulClass*
 }
 
 #include "Locals.h"
+#include "generated.h"
 #include "Opcodes.h"
 #include "Types.h"
 #include "TupulClass.h"
@@ -215,6 +216,21 @@ TupulByte** execInterp(TupulMethod* method, Locals* locals) {
 							break;
 						case '-':
 							result = tupDiff(bytes0, type0, bytes1, type1, typeOut);
+							break;
+						case '*':
+							result = tupProd(bytes0, type0, bytes1, type1, typeOut);
+							break;
+						case '/':
+							result = tupQuot(bytes0, type0, bytes1, type1, typeOut);
+							break;
+						case '|':
+							result = tupBOr(bytes0, type0, bytes1, type1, typeOut);
+							break;
+						case '&':
+							result = tupBAnd(bytes0, type0, bytes1, type1, typeOut);
+							break;
+						case '%':
+							result = tupRemain(bytes0, type0, bytes1, type1, typeOut);
 							break;
 						default:
 							// TODO: print line number
