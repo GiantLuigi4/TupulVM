@@ -92,10 +92,10 @@ int main(int argc, char** args) {
 	if (debugOut) {
 		if (bytes[0] == LONG) printf("-- Result: %lli --\n", *((long long*) bytes[1]));
 		if (bytes[0] == INT) printf("-- Result: %i --\n", *((int*) bytes[1]));
-		if (bytes[0] == SHORT) printf("-- Result: %s --\n", *((int*) bytes[1]));
+		if (bytes[0] == SHORT) printf("-- Result: %i --\n", *((int*) bytes[1]));
 		if (bytes[0] == BYTE) printf("-- Result: %i --\n", (int) *((TupulByte*) bytes[1]));
 		if (bytes[0] == FLOAT) printf("-- Result: %f --\n", *((float*) bytes[1]));
-		if (bytes[0] == DOUBLE) printf("-- Result: %d --\n", *((double*) bytes[1]));
+		if (bytes[0] == DOUBLE) printf("-- Result: %f --\n", *((double*) bytes[1]));
 		if (bytes[0] == CHAR) printf("-- Result: %c --\n", *((char*) bytes[1]));
 	}
 

@@ -1,18 +1,18 @@
 {
-    "version": "2.0.0",
-    "tasks": [
-        {
-            "type": "shell",
-            "label": "buildgcc",
-            "command": "g++",
-            "args": [
-                "-g", "${workspaceFolder}/*.cpp",
-                "-o", "${workspaceFolder}/.run/program.exe",
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"type": "shell",
+			"label": "buildgcc",
+			"command": "g++",
+			"args": [
+				"-g", "${workspaceFolder}/*.cpp",
+				"-o", "${workspaceFolder}/.run/program.exe",
 				
-                "-fpermissive", // windows moment
+				"-fpermissive", // windows moment
 				
 				"-flto",
-                // "-O3",
+				"-Os",
 
 				"-floop-nest-optimize",
 				"-floop-strip-mine",
@@ -21,16 +21,16 @@
 				"-flto-compression-level=19",
 				// "-flto-compression-level=9",
 				"-funroll-loops",
-            ],
-            "options": {
-                "cwd": "${workspaceFolder}"
-            },
-            "problemMatcher": ["$gcc"],
-            "group": {
-                "kind": "build",
-                "isDefault": true
-            }
-        },
+			],
+			"options": {
+				"cwd": "${workspaceFolder}"
+			},
+			"problemMatcher": ["$gcc"],
+			"group": {
+				"kind": "build",
+				"isDefault": true
+			}
+		},
 		{
 			"type": "shell",
 			"label": "buildclang",
@@ -42,12 +42,22 @@
 				"-o", "${workspaceFolder}/.run/program.exe",
 
 				"-flto=full",
+				"-Oz",
 				// "-O3",
+				"-march=native",
+				// "-disable-libcalls-shrinkwrap",
+				// "-disable-slp-vectorizer",
+				// "-disable-pgo-memopt-opt",
 
-				"-nopie",
-				"-noprofilelib",
+				"-fsyntax-only",
+
+				// pretty sure these are doing nothing, but I'm keeping them anyway
+				// "-nopie",
+				// "-noprofilelib",
+				// "-fsanitize-memory-track-origins",
 				"-fsanitize-minimal-runtime",
 				"-funroll-loops",
+				"-fvectorize",
 			],
 			"options": {
 				"cwd": "${workspaceFolder}"
@@ -58,5 +68,5 @@
 				"isDefault": true
 			}
 		}
-    ]
+	]
 }
