@@ -2,7 +2,7 @@
 #include <string>
 #include <vector>
 #include "MethodTree.h"
-#include "TupulClass.h"
+#include "../TupulClass.h"
 using namespace std;
 
 #define byte unsigned char

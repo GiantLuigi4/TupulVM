@@ -1,9 +1,7 @@
 #include "Types.h"
-#include "Utils.h"
+#include "../Utils.h"
 
-#define abyte unsigned char
-
-TupulByte* BYTE			=	(abyte[]) {0  };
+TupulByte* BYTE			=	(TupulByte[]) {0  };
 TupulByte* SHORT		=	(TupulByte[]) {1  };
 TupulByte* CHAR			=	(TupulByte[]) {2  };
 TupulByte* HALF			=	(TupulByte[]) {3  };
@@ -23,16 +21,17 @@ void freeType(TupulByte* type) {
 
 TupulByte* copyType(TupulByte* type) {
 	if (type[0] == 8) {
-		short len = ((type[1] & 0xFF) << 8) |
-					((type[2] & 0xFF) << 0);
+		unsigned short len = ((type[1] & 0xFF) << 8) |
+							 ((type[2] & 0xFF) << 0);
 		TupulByte* out = (TupulByte*) trackedAlloc(sizeof(TupulByte), len);
-		for (int i = 0; i < len; i++) out[i] = type[i];
+		// for (int i = 0; i < len; i++) out[i] = type[i];
+		memcpy(out, type,  len);
 		return out;
 	}
 	return type;
 }
 
-short getTypeLength(TupulByte* type) {
+unsigned short getTypeLength(TupulByte* type) {
 	if (type[0] != 8) {
 		// well that's neat
 		switch (type[0]) {
@@ -50,11 +49,13 @@ short getTypeLength(TupulByte* type) {
 }
 
 #include <cstdio>
+#include <string.h>
 TupulByte* tupCast(TupulByte* val, TupulByte* typeSrc, TupulByte* typeDst) {
 	if (typeSrc == typeDst) {
-		int len = getTypeLength(typeSrc);
+		unsigned short len = getTypeLength(typeSrc);
 		TupulByte* bytesCopy = (TupulByte*) trackedAlloc(sizeof(TupulByte), len);
-		for (int i = 0; i < len; i++) bytesCopy[i] = val[i];
+		// for (unsigned short  i = 0; i < len; i++) bytesCopy[i] = val[i];
+		memcpy(bytesCopy, val,  len);
 		return bytesCopy;
 	}
 	// printf("%i\n", typeSrc[0]);
@@ -172,157 +173,6 @@ TupulByte* tupCast(TupulByte* val, TupulByte* typeSrc, TupulByte* typeDst) {
 		}
 	}
 	// TODO: throw exception
-	return {0};
-}
-
-// yea, this ain't a file you're meant to read, lol
-// TODO: template math
-TupulByte* tupSum(TupulByte* num0, TupulByte* type0, TupulByte* num1, TupulByte* type1, TupulByte** type) {
-	type[0] = preferredType(type0, type1);
-	// TODO: non-primitive sum
-	if (type0 != type[0]) num0 = tupCast(num0, type0, type[0]);
-	if (type1 != type[0]) num1 = tupCast(num1, type1, type[0]);
-	if (type[0] == BYTE) {
-		TupulByte l = *((TupulByte*) num0) + *((TupulByte*) num1);
-		TupulByte* bytes = (TupulByte*) &l;
-		TupulByte* out = (TupulByte*) trackedAlloc(sizeof(TupulByte), 1);
-		out[0] = bytes[0];
-		return out;
-	}
-	if (type[0] == SHORT) {
-		short l = *((short*) num0) + *((short*) num1);
-		TupulByte* bytes = (TupulByte*) &l;
-		TupulByte* out = (TupulByte*) trackedAlloc(sizeof(TupulByte), 2);
-		out[0] = bytes[0];
-		out[1] = bytes[1];
-		return out;
-	}
-	if (type[0] == INT) {
-		int l = *((int*) num0) + *((int*) num1);
-		TupulByte* bytes = (TupulByte*) &l;
-		TupulByte* out = (TupulByte*) trackedAlloc(sizeof(TupulByte), 4);
-		out[0] = bytes[0];
-		out[1] = bytes[1];
-		out[2] = bytes[2];
-		out[3] = bytes[3];
-		return out;
-	}
-	if (type[0] == LONG) {
-		long long l = *((long long*) num0) + *((long long*) num1);
-		TupulByte* bytes = (TupulByte*) &l;
-		TupulByte* out = (TupulByte*) trackedAlloc(sizeof(TupulByte), 8);
-		out[0] = bytes[0];
-		out[1] = bytes[1];
-		out[2] = bytes[2];
-		out[3] = bytes[3];
-		out[4] = bytes[4];
-		out[5] = bytes[5];
-		out[6] = bytes[6];
-		out[7] = bytes[7];
-		return out;
-	}
-	if (type[0] == DOUBLE) {
-		double l = *((double*) num0) + *((double*) num1);
-		TupulByte* bytes = (TupulByte*) &l;
-		TupulByte* out = (TupulByte*) trackedAlloc(sizeof(TupulByte), 8);
-		out[0] = bytes[0];
-		out[1] = bytes[1];
-		out[2] = bytes[2];
-		out[3] = bytes[3];
-		out[4] = bytes[4];
-		out[5] = bytes[5];
-		out[6] = bytes[6];
-		out[7] = bytes[7];
-		return out;
-	}
-	if (type[0] == FLOAT) {
-		float l = *((float*) num0) + *((float*) num1);
-		TupulByte* bytes = (TupulByte*) &l;
-		TupulByte* out = (TupulByte*) trackedAlloc(sizeof(TupulByte), 8);
-		out[0] = bytes[0];
-		out[1] = bytes[1];
-		out[2] = bytes[2];
-		out[3] = bytes[3];
-		out[4] = bytes[4];
-		out[5] = bytes[5];
-		out[6] = bytes[6];
-		out[7] = bytes[7];
-		return out;
-	}
-	return {0};
-}
-TupulByte* tupDiff(TupulByte* num0, TupulByte* type0, TupulByte* num1, TupulByte* type1, TupulByte** type) {
-	type[0] = preferredType(type0, type1);
-	// TODO: non-primitive sum
-	if (type0 != type[0]) num0 = tupCast(num0, type0, type[0]);
-	if (type1 != type[0]) num1 = tupCast(num1, type1, type[0]);
-	if (type[0] == BYTE) {
-		TupulByte l = *((TupulByte*) num0) - *((TupulByte*) num1);
-		TupulByte* bytes = (TupulByte*) &l;
-		TupulByte* out = (TupulByte*) trackedAlloc(sizeof(TupulByte), 1);
-		out[0] = bytes[0];
-		return out;
-	}
-	if (type[0] == SHORT) {
-		short l = *((short*) num0) - *((short*) num1);
-		TupulByte* bytes = (TupulByte*) &l;
-		TupulByte* out = (TupulByte*) trackedAlloc(sizeof(TupulByte), 2);
-		out[0] = bytes[0];
-		out[1] = bytes[1];
-		return out;
-	}
-	if (type[0] == INT) {
-		int l = *((int*) num0) - *((int*) num1);
-		TupulByte* bytes = (TupulByte*) &l;
-		TupulByte* out = (TupulByte*) trackedAlloc(sizeof(TupulByte), 4);
-		out[0] = bytes[0];
-		out[1] = bytes[1];
-		out[2] = bytes[2];
-		out[3] = bytes[3];
-		return out;
-	}
-	if (type[0] == LONG) {
-		long long l = *((long long*) num0) - *((long long*) num1);
-		TupulByte* bytes = (TupulByte*) &l;
-		TupulByte* out = (TupulByte*) trackedAlloc(sizeof(TupulByte), 8);
-		out[0] = bytes[0];
-		out[1] = bytes[1];
-		out[2] = bytes[2];
-		out[3] = bytes[3];
-		out[4] = bytes[4];
-		out[5] = bytes[5];
-		out[6] = bytes[6];
-		out[7] = bytes[7];
-		return out;
-	}
-	if (type[0] == DOUBLE) {
-		double l = *((double*) num0) - *((double*) num1);
-		TupulByte* bytes = (TupulByte*) &l;
-		TupulByte* out = (TupulByte*) trackedAlloc(sizeof(TupulByte), 8);
-		out[0] = bytes[0];
-		out[1] = bytes[1];
-		out[2] = bytes[2];
-		out[3] = bytes[3];
-		out[4] = bytes[4];
-		out[5] = bytes[5];
-		out[6] = bytes[6];
-		out[7] = bytes[7];
-		return out;
-	}
-	if (type[0] == FLOAT) {
-		float l = *((float*) num0) - *((float*) num1);
-		TupulByte* bytes = (TupulByte*) &l;
-		TupulByte* out = (TupulByte*) trackedAlloc(sizeof(TupulByte), 8);
-		out[0] = bytes[0];
-		out[1] = bytes[1];
-		out[2] = bytes[2];
-		out[3] = bytes[3];
-		out[4] = bytes[4];
-		out[5] = bytes[5];
-		out[6] = bytes[6];
-		out[7] = bytes[7];
-		return out;
-	}
 	return {0};
 }
 

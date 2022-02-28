@@ -2,7 +2,7 @@
 #include "Utils.h"
 #include "FileSystems.h"
 
-#include "ClassTree.h"
+#include "loading/ClassTree.h"
 
 using namespace std;
 
@@ -10,11 +10,11 @@ using namespace std;
 // yay -Syyu glfw-[display type]
 
 #include "Locals.h"
-#include "ClassLoader.h"
+#include "loading/ClassLoader.h"
 
 #include "Utils.h"
 
-#include "Types.h"
+#include "data/Types.h"
 
 int main(int argc, char** args) {
 	// args[0] // executable path
@@ -68,10 +68,11 @@ int main(int argc, char** args) {
 	// 	// resultAllocs();
 	// }
 	Locals* locals = (Locals*) trackedAlloc(sizeof(Locals), 1);
-	long long start = getTimeForPerformance();
+	unsigned long long start = getTimeForPerformance();
 	TupulByte** bytes = mainMethod->run(clazz->methods[0], locals);
-	long long end = getTimeForPerformance();
-	long long time = end - start;
+	unsigned long long end = getTimeForPerformance();
+	unsigned long long time = end - start;
+	printf("%llu nanoseconds\n", time);
 
 	if (bytes[0][0] == 254) { // vmerr
 		switch (bytes[1][0]) {
@@ -86,16 +87,15 @@ int main(int argc, char** args) {
 			default: return -20;
 		}
 	}
-	printf("%llu nanoseconds\n", time);
 	int i0 = *((int*) bytes[1]);
 
 	if (debugOut) {
 		if (bytes[0] == LONG) printf("-- Result: %lli --\n", *((long long*) bytes[1]));
 		if (bytes[0] == INT) printf("-- Result: %i --\n", *((int*) bytes[1]));
-		if (bytes[0] == SHORT) printf("-- Result: %s --\n", *((int*) bytes[1]));
+		if (bytes[0] == SHORT) printf("-- Result: %i --\n", *((int*) bytes[1]));
 		if (bytes[0] == BYTE) printf("-- Result: %i --\n", (int) *((TupulByte*) bytes[1]));
 		if (bytes[0] == FLOAT) printf("-- Result: %f --\n", *((float*) bytes[1]));
-		if (bytes[0] == DOUBLE) printf("-- Result: %d --\n", *((double*) bytes[1]));
+		if (bytes[0] == DOUBLE) printf("-- Result: %f --\n", *((double*) bytes[1]));
 		if (bytes[0] == CHAR) printf("-- Result: %c --\n", *((char*) bytes[1]));
 	}
 

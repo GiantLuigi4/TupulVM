@@ -1,7 +1,7 @@
 #pragma once
 #include <vector>
-#include "TupulClass.h"
-#include "SourceList.h"
+#include "../TupulClass.h"
+#include "../SourceList.h"
 #include "ClassTree.h"
 
 using namespace std;

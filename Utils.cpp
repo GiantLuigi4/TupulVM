@@ -88,9 +88,10 @@ char* readFile(string name) {
 	int getLen(void* obj) {
 		int i = 0;
 		TupulByte* chr = (TupulByte*) trackedAlloc(sizeof(TupulByte), 1);
+		TupulByte* objBytes = (TupulByte*) obj;
 		for (;;) {
 			i++;
-			memcpy(chr, obj + i, 1);
+			memcpy(chr, objBytes + i, 1);
 			if (chr[0] == '\0') {
 				#ifdef MEM_TRACK
 					leftovers -= 1;

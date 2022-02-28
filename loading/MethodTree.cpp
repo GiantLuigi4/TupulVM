@@ -1,8 +1,8 @@
 #include "MethodTree.h"
-#include "Insn.h"
-#include "Opcodes.h"
+#include "../Insn.h"
+#include "../Opcodes.h"
 
-#include "Utils.h"
+#include "../Utils.h"
 
 TupulMethod* finishMethod(MethodTree tree, TupulClass* clazz) {
 	TupulMethod* method = (TupulMethod*) trackedAlloc(sizeof(TupulMethod), 1);

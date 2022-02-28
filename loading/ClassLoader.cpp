@@ -1,8 +1,8 @@
 #include "ClassLoader.h"
-#include "string.h"
-#include "STDClasses.h"
+#include <string.h>
+#include "../STDClasses.h"
 
-#include "Utils.h"
+#include "../Utils.h"
 
 TupulClass* getClass(ClassLoader* loader, char* name) {
 	string cname = name;

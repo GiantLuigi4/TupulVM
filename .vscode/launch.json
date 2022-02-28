@@ -1,40 +1,40 @@
 {
-    // Use IntelliSense to learn about possible attributes.
-    // Hover to view descriptions of existing attributes.
-    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
-    "version": "0.2.0",
-    "configurations": [
-        {
-            "type": "lldb",
-            "request": "launch",
-            "name": "lldb debug",
-            "program": "${workspaceFolder}/.run/program.exe",
-            "args": [
-                "-mode:fs", 
-                "-class_path:./classes",
-                "-class:BasicTest",
-                "-method:main()I",
+	// Use IntelliSense to learn about possible attributes.
+	// Hover to view descriptions of existing attributes.
+	// For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+	"version": "0.2.0",
+	"configurations": [
+		{
+			"type": "lldb",
+			"request": "launch",
+			"name": "lldb debug",
+			"program": "${workspaceFolder}/.run/program.exe",
+			"args": [
+				"-mode:fs", 
+				"-class_path:./classes",
+				"-class:BasicTest",
+				"-method:main()I",
 				"--dout",
-                ":", // start program args after this arg
-            ],
-            "cwd": "${workspaceFolder}/.run/",
-            "preLaunchTask": "buildgcc",
-        },
+				":", // start program args after this arg
+			],
+			"cwd": "${workspaceFolder}/.run/",
+			"preLaunchTask": "buildclang",
+		},
 		{
 			"name": "(gdb) Launch",
 			"type": "cppdbg",
 			"request": "launch",
 			"program": "${workspaceFolder}/.run/program.exe",
-            "args": [
-                "-mode:fs", 
-                "-class_path:./classes",
-                "-class:BasicTest",
-                "-method:main()I",
+			"args": [
+				"-mode:fs", 
+				"-class_path:./classes",
+				"-class:BasicTest",
+				"-method:main()I",
 				"--dout",
-                ":", // start program args after this arg
-            ],
+				":", // start program args after this arg
+			],
 			"stopAtEntry": false,
-            "cwd": "${workspaceFolder}/.run/",
+			"cwd": "${workspaceFolder}/.run/",
 			"environment": [],
 			"externalConsole": false,
 			"MIMode": "gdb",
@@ -50,7 +50,7 @@
 					"ignoreFailures": true
 				}
 			],
-            "preLaunchTask": "buildgcc",
+			"preLaunchTask": "buildgcc",
 		}
-    ]
+	]
 }

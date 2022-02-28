@@ -1,8 +1,8 @@
 #pragma once
 #include <string>
 #include <vector>
-#include "Insn.h"
-#include "TupulMethod.h"
+#include "../Insn.h"
+#include "../TupulMethod.h"
 #include <memory>
 using namespace std;
 

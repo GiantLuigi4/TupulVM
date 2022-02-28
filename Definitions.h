@@ -1,3 +1,4 @@
+#pragma once
 /* constants */
 #define TupulByte unsigned char
 #define null nullptr
@@ -112,6 +113,7 @@
 			Should the VM use a custom calloc (allocation) method?
 			Tends to wind up working better
 			The VM may crash frequently without this
+			If Cached Pointers are enabled, this is also enabled
 		Options:
 			Option: 1
 				Name: Default (On)

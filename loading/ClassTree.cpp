@@ -1,10 +1,10 @@
 #include <string>
 #include "ClassTree.h"
 #include "MethodTree.h"
-#include "Opcodes.h"
-#include "TupulClass.h"
+#include "../Opcodes.h"
+#include "../TupulClass.h"
 
-#include "Utils.h"
+#include "../Utils.h"
 
 TupulClass* finishClass(ClassTree* tree) {
 	#ifdef MEM_TRACK_COUNT
