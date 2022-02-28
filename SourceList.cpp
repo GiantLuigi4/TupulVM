@@ -59,7 +59,7 @@ SourceList* createSourceSingleFile(string fileName) {
 	data[0] = name;
 	data[1] = path;
 
-	list->data = (long) data;
+	list->data = (unsigned long long) data;
 	// char** selfName = (char**) list->data;
 	// printf("%s\n", selfName[0]);;
 	list->freeSources = freeSourcesSF;
@@ -115,7 +115,7 @@ SourceList* createSourceFS(string relDir) {
 	data[0] = name;
 	data[1] = path;
 
-	list->data = (long) data;
+	list->data = (unsigned long long) data;
 	list->freeSources = freeSourcesSF;
 	list->getContents = getContentsFS;
 	list->containsName = containsNameFS;

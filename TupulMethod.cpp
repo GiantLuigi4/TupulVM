@@ -10,8 +10,8 @@ void setupInterpretedMethod(TupulMethod* method, vector<Insn> insns, TupulClass*
 	for (int i = 0; i < insns.size(); i++) insnsPtr[i] = insns[i]; // copy the vector's contents to the pointer
 	Insn** insnsPtrPtr = (Insn**) trackedAlloc(sizeof(Insn*), 2); // create a list of two "Insn*"s, only one of which will be an Insn*
 	insnsPtrPtr[0] = insnsPtr; // store insn list
-	insnsPtrPtr[1] = (Insn*) (long) insns.size(); // store length
-	method->context = (long) insnsPtrPtr; // set the context to this cursed nonsense
+	insnsPtrPtr[1] = (Insn*) (unsigned long long) insns.size(); // store length
+	method->context = (unsigned long long) insnsPtrPtr; // set the context to this cursed nonsense
 
 	method->run = execInterp; // run method
 	method->free = freeInterpMethod; // run method
@@ -27,7 +27,7 @@ void setupInterpretedMethod(TupulMethod* method, vector<Insn> insns, TupulClass*
 #include "loading/ClassLoader.h"
 TupulByte** execInterp(TupulMethod* method, Locals* locals) {
 	Insn** insns = (Insn**) method->context;
-	long len = (long) insns[1];
+	unsigned long long len = (unsigned long long) insns[1];
 	for (int i = 0; i < len; i++) {
 		Insn insn = insns[0][i];
 
@@ -313,7 +313,7 @@ void freeInterpMethod(TupulMethod* method) {
 		printf("Freeing method: \"%s\", starting with %i pointers\n", method->name.c_str(), allocs);
 	#endif
 	Insn** insns = (Insn**) method->context;
-	long len = (long) insns[1];
+	unsigned long long len = (unsigned long long) insns[1];
 	for (int i = 0; i < len; i++) {
 		Insn insn = insns[0][i];
 		Insns::freeInsn(insn);

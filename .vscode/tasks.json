@@ -6,20 +6,24 @@
 			"label": "buildgcc",
 			"command": "g++",
 			"args": [
-				"-g", "${workspaceFolder}/*.cpp",
+				"-Wall",
+				// help
+				"-g", "*.cpp;./data/*.cpp;./loading/*.cpp;./stdlib/tupul/lang/*.cpp",
+				
 				"-o", "${workspaceFolder}/.run/program.exe",
 				
 				"-fpermissive", // windows moment
 				
 				"-flto",
 				"-Os",
+				// "-march=native",
 
 				"-floop-nest-optimize",
 				"-floop-strip-mine",
 				"-ftree-loop-linear",
 				"-floop-block",
-				"-flto-compression-level=19",
-				// "-flto-compression-level=9",
+				// "-flto-compression-level=19",
+				"-flto-compression-level=9",
 				"-funroll-loops",
 			],
 			"options": {

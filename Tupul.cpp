@@ -60,13 +60,13 @@ int main(int argc, char** args) {
 	if (launchMode == 2) ldr->sources = createSourceFS(classPath);
 	TupulClass* clazz = getClass(ldr, (char*) clazzToInvoke.c_str());
 	TupulMethod* mainMethod = getMethod(clazz, (char*) methodToInvoke.c_str(), (char*) invoctionDescr.c_str());
-	// for (int i = 0; i < 100000000; i++) {
-	// 	Locals* locals = (Locals*) trackedAlloc(sizeof(Locals), 1);
-	// 	TupulByte** bytes = mainMethod->run(clazz->methods[0], locals);
-	// 	trackedFree(bytes[1]);
-	// 	trackedFree(bytes);
-	// 	// resultAllocs();
-	// }
+	for (int i = 0; i < 100000000; i++) {
+		Locals* locals = (Locals*) trackedAlloc(sizeof(Locals), 1);
+		TupulByte** bytes = mainMethod->run(clazz->methods[0], locals);
+		trackedFree(bytes[1]);
+		trackedFree(bytes);
+		// resultAllocs();
+	}
 	Locals* locals = (Locals*) trackedAlloc(sizeof(Locals), 1);
 	unsigned long long start = getTimeForPerformance();
 	TupulByte** bytes = mainMethod->run(clazz->methods[0], locals);
