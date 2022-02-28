@@ -21,16 +21,17 @@ void freeType(TupulByte* type) {
 
 TupulByte* copyType(TupulByte* type) {
 	if (type[0] == 8) {
-		short len = ((type[1] & 0xFF) << 8) |
-					((type[2] & 0xFF) << 0);
+		unsigned short len = ((type[1] & 0xFF) << 8) |
+							 ((type[2] & 0xFF) << 0);
 		TupulByte* out = (TupulByte*) trackedAlloc(sizeof(TupulByte), len);
-		for (int i = 0; i < len; i++) out[i] = type[i];
+		// for (int i = 0; i < len; i++) out[i] = type[i];
+		memcpy(out, type,  len);
 		return out;
 	}
 	return type;
 }
 
-short getTypeLength(TupulByte* type) {
+unsigned short getTypeLength(TupulByte* type) {
 	if (type[0] != 8) {
 		// well that's neat
 		switch (type[0]) {
@@ -48,11 +49,13 @@ short getTypeLength(TupulByte* type) {
 }
 
 #include <cstdio>
+#include <string.h>
 TupulByte* tupCast(TupulByte* val, TupulByte* typeSrc, TupulByte* typeDst) {
 	if (typeSrc == typeDst) {
-		int len = getTypeLength(typeSrc);
+		unsigned short len = getTypeLength(typeSrc);
 		TupulByte* bytesCopy = (TupulByte*) trackedAlloc(sizeof(TupulByte), len);
-		for (int i = 0; i < len; i++) bytesCopy[i] = val[i];
+		// for (unsigned short  i = 0; i < len; i++) bytesCopy[i] = val[i];
+		memcpy(bytesCopy, val,  len);
 		return bytesCopy;
 	}
 	// printf("%i\n", typeSrc[0]);

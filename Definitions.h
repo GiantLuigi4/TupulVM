@@ -1,3 +1,4 @@
+#pragma once
 /* constants */
 #define TupulByte unsigned char
 #define null nullptr
