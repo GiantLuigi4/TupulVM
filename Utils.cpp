@@ -97,7 +97,7 @@ char* readFile(string name) {
 					leftovers -= 1;
 				#endif
 	
-				int len = i;
+				int len = 1;
 				if (freeBytes.count(len) == 0) {
 					vector<void*> blocks;
 					freeBytes.insert(pair<int, vector<void*>>(len, blocks));
