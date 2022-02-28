@@ -22,9 +22,9 @@ void setupInterpretedMethod(TupulMethod* method, vector<Insn> insns, TupulClass*
 #include "Locals.h"
 #include "generated.h"
 #include "Opcodes.h"
-#include "Types.h"
 #include "TupulClass.h"
-#include "ClassLoader.h"
+#include "data/Types.h"
+#include "loading/ClassLoader.h"
 TupulByte** execInterp(TupulMethod* method, Locals* locals) {
 	Insn** insns = (Insn**) method->context;
 	long len = (long) insns[1];

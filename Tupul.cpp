@@ -2,7 +2,7 @@
 #include "Utils.h"
 #include "FileSystems.h"
 
-#include "ClassTree.h"
+#include "loading/ClassTree.h"
 
 using namespace std;
 
@@ -10,11 +10,11 @@ using namespace std;
 // yay -Syyu glfw-[display type]
 
 #include "Locals.h"
-#include "ClassLoader.h"
+#include "loading/ClassLoader.h"
 
 #include "Utils.h"
 
-#include "Types.h"
+#include "data/Types.h"
 
 int main(int argc, char** args) {
 	// args[0] // executable path
